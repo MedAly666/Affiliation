@@ -10,12 +10,14 @@
  */
 
 import puppeteer, { Browser, Page} from 'puppeteer';
+import { MD5 } from 'bun'; 
 
 
 const SUPERDEALS_URL = 'https://www.aliexpress.com/ssr/300000444/GSDWp3p6aC?disableNav=YES&pha_manifest=ssr&_immersiveMode=true&wh_offline=true';
 
 const PRODUCT_SELECTOR = 'a.productContainer';
 const PRODUCT_TITLE_SELECTOR = 'div.aec-view>div.AIC-ATM-container span.AIC-ATM-multiLine span';
+const PRODUCT_URL_SELECTOR = 'a.productContainer';
 const PRODUCT_IMAGE_SELECTOR = 'div.AIC-MI-container img';
 const PRODUCT_CURRENT_PRICE_SELECTOR = 'div.aec-view.bottom_container_3b1b3a68 span.price_3b1b3a68';
 const PRODUCT_ORIGINAL_PRICE_SELECTOR = 'div.aec-view.bottom_container_3b1b3a68 div span.ori_price_3b1b3a68';
@@ -104,6 +106,14 @@ async function extractProductData( page: Page ) {
         const currentPriceElement = await product.$(PRODUCT_CURRENT_PRICE_SELECTOR);
         const originalPriceElement = await product.$(PRODUCT_ORIGINAL_PRICE_SELECTOR);
         
+        // Extract the product URL
+        const url = await page.evaluate(el => el.href, product);
+        
+        // Calculate MD5 hash of the URL
+        const urlHash = new MD5()
+            .update(url)
+            .digest('hex');
+        
         const title = titleElement ? await page.evaluate(el => el.textContent, titleElement) : 'No title';
         const image = imageElement ? await page.evaluate(el => el.src, imageElement) : 'No image';
         const currentPrice = currentPriceElement ? await page.evaluate(el => el.textContent, currentPriceElement) : 'No current price';
@@ -112,8 +122,11 @@ async function extractProductData( page: Page ) {
         return {
             title: title.trim(),
             image: image.trim(),
+            url: url.trim(),
+            urlHash,
             currentPrice: currentPrice.trim(),
-            originalPrice: originalPrice.trim()
+            originalPrice: originalPrice.trim(),
+            
         };
     }));
     return productData;
@@ -155,5 +168,10 @@ async function extractProductData( page: Page ) {
     // Log the product data
     console.log('Product Data:', productData);
     
-    //await browser.close();
+    //close browser
+    await closeBrowser(browser)
+
+    //store the data to supabase postgress database
+
+    
 })();
