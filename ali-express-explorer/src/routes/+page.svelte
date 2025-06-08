@@ -75,6 +75,43 @@
                 return getDiscountPercentage(b.original_price, b.price) - getDiscountPercentage(a.original_price, a.price);
         }
     }));
+
+    // Pagination for infinite scroll
+    let itemsPerPage = $state(20);
+    let visibleItems = $derived(filteredProducts.slice(0, itemsPerPage));
+    let isLoadingMore = $state(false);
+
+    // Function to load more products
+    function loadMoreProducts() {
+        if (isLoadingMore || itemsPerPage >= filteredProducts.length) return;
+        
+        isLoadingMore = true;
+        // Simulate loading delay
+        setTimeout(() => {
+            itemsPerPage += 12;
+            isLoadingMore = false;
+        }, 500);
+    }
+
+    // Set up intersection observer for infinite scroll
+    let loadMoreTrigger: HTMLDivElement | null = $state(null);
+    
+    $effect(() => {
+        if (!loadMoreTrigger) return;
+        
+        const observer = new IntersectionObserver(entries => {
+            const [entry] = entries;
+            if (entry.isIntersecting && !isLoadingMore && visibleItems.length < filteredProducts.length) {
+                loadMoreProducts();
+            }
+        }, { rootMargin: '200px' });
+        
+        observer.observe(loadMoreTrigger);
+        
+        return () => {
+            if (loadMoreTrigger) observer.unobserve(loadMoreTrigger);
+        };
+    });
 </script>
 
 <svelte:head>
@@ -160,7 +197,7 @@
                 </div>
             {:else}
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {#each filteredProducts as product}
+                    {#each visibleItems as product}
                         <Card class="h-full flex flex-col p-0 hover:shadow-lg transition-shadow overflow-hidden group">
                             <div class="relative overflow-hidden">
                                 <img
@@ -226,7 +263,30 @@
                             </div>
                         </Card>
                     {/each}
+                    
+                    <!-- Infinite scroll loading trigger -->
+                    <div 
+                        bind:this={loadMoreTrigger} 
+                        class="col-span-full flex justify-center py-8 {isLoadingMore ? 'opacity-100' : 'opacity-0'}"
+                    >
+                        {#if isLoadingMore}
+                            <Spinner size="8" />
+                            <span class="ml-3">Loading more products...</span>
+                        {/if}
+                    </div>
                 </div>
+                
+                <!-- Show load more button if there are more products to load -->
+                {#if !isLoadingMore && visibleItems.length < filteredProducts.length}
+                    <div class="text-center mt-8">
+                        <Button color="light" on:click={loadMoreProducts}>
+                            Load More Products
+                        </Button>
+                        <p class="text-sm text-gray-500 mt-2">
+                            Showing {visibleItems.length} of {filteredProducts.length} products
+                        </p>
+                    </div>
+                {/if}
             {/if}
         </div>
     </div>
