@@ -12,6 +12,9 @@
 import puppeteer, { Browser, Page} from 'puppeteer';
 import { MD5 } from 'bun'; 
 
+import supabase from "../supabase";
+import { type Database } from "../database.types";
+
 
 const SUPERDEALS_URL = 'https://www.aliexpress.com/ssr/300000444/GSDWp3p6aC?disableNav=YES&pha_manifest=ssr&_immersiveMode=true&wh_offline=true';
 
@@ -25,7 +28,7 @@ const PRODUCT_ORIGINAL_PRICE_SELECTOR = 'div.aec-view.bottom_container_3b1b3a68 
 
 async function launchBrowser(): Promise<Browser> {
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         timeout: 100000,
         defaultViewport: { width: 1024, height: 720 },
         //args: ['--proxy-server=socks5://127.0.0.1:9050']
@@ -123,10 +126,10 @@ async function extractProductData( page: Page ) {
             title: title.trim(),
             image: image.trim(),
             url: url.trim(),
-            urlHash,
-            currentPrice: currentPrice.trim(),
-            originalPrice: originalPrice.trim(),
-            
+            url_hash: urlHash,
+            price: parseFloat(currentPrice.replace('€', '').trim()),
+            original_price: parseFloat(originalPrice.replace('€', '').trim()),
+
         };
     }));
     return productData;
@@ -173,5 +176,14 @@ async function extractProductData( page: Page ) {
 
     //store the data to supabase postgress database
 
+    for( let product of productData ){
+        const { error } = await supabase 
+            .from('products') 
+            .upsert (product);
+        
+        if( error ) console.log(error);
+    }
     
+
+
 })();
