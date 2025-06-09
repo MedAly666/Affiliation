@@ -7,7 +7,7 @@ import supabase from "$lib/supabase";
 
 export const GET: RequestHandler = async ({ url }) => {
   // Get query parameters
-  const limit = Number(url.searchParams.get('limit') || '20');
+  const limit = Number(url.searchParams.get('limit') || '20000');
   const page = Number(url.searchParams.get('page') || '1');
   const offset = (page - 1) * limit;
   

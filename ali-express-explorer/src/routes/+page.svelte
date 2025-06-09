@@ -23,7 +23,7 @@
     // Filter and sorting functionality
     let searchQuery = $state("");
     let minPrice = $state(0);
-    let maxPrice = $state(1000);
+    let maxPrice = $state(100);
     let sortOption = $state("discount"); // discount, price-low, price-high, newest
     let favoriteProducts: string[] = $state([]);
 
@@ -149,10 +149,10 @@
                 <label class="block text-sm font-medium mb-2">Price Range (€)</label>
                 <div class="flex items-center mb-2">
                     <span class="w-12 text-sm">{minPrice}€</span>
-                    <Range class="mx-2" min="0" max="1000" bind:value={minPrice} />
+                    <Range class="mx-2" min="0" max="100" bind:value={minPrice} />
                     <span class="w-12 text-sm">{maxPrice}€</span>
                 </div>
-                <Range class="mb-4" min="0" max="1000" bind:value={maxPrice} />
+                <Range class="mb-4" min="0" max="100" bind:value={maxPrice} />
             </div>
             
             <div class="mb-4">
