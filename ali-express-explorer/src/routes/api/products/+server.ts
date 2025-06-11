@@ -11,16 +11,16 @@ export const GET: RequestHandler = async ({ url }) => {
   const page = Number(url.searchParams.get('page') || '1');
   const offset = (page - 1) * limit;
 
-  // Calculate the time 8 hours ago
-  // This will be used to filter products created in the last 8 hours
-  const eightHoursAgo = new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString();
-  
+  // Calculate the time 48 hours ago
+  // This will be used to filter products created in the last 48 hours
+  const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+
   // Query products from Supabase
   const { data, error } = await supabase
     .from('products')
     .select('*')
     .order('created_at', { ascending: false })
-    .gte('created_at', eightHoursAgo)
+    .gte('created_at', fortyEightHoursAgo)
     .range(offset, offset + limit - 1);
   
   if (error) {

@@ -84,26 +84,39 @@ async function getSuperDealsReviews( browser: Browser ): Promise<void> {
 }
 
 (async () => {
-    // Launch the browser with the specified options
-    console.log('Launching browser...');
-    const browser = await launchBrowser();
-    console.log('Browser launched successfully.');
+    try {
+        // Set a global timeout for the entire script (2 hours max)
+        const scriptTimeout = setTimeout(() => {
+            console.error("Script execution timed out after 2 hours");
+            process.exit(1);
+        }, 2 * 60 * 60 * 1000);
 
-    // Get super deals
-    await getSuperDeals(browser);
-    console.log('Super deals fetched and stored successfully.');
-    // Note: The browser will not be closed automatically here to allow for debugging.
-    console.log('Fetching reviews for super deals...');
+        // Launch the browser with the specified options
+        console.log('Launching browser...');
+        const browser = await launchBrowser();
+        console.log('Browser launched successfully.');
 
-    // Get reviews for super deals
-    await getSuperDealsReviews(browser);
-    console.log('Reviews fetched and stored successfully.');
-    // Note: The browser will not be closed automatically here to allow for debugging.
-
-    console.log('All operations completed successfully.');
-
-    //close browser
-    await closeBrowser(browser)
-
-
+        try {
+            // Get super deals
+            await getSuperDeals(browser);
+            console.log('Super deals fetched and stored successfully.');
+            
+            console.log('Fetching reviews for super deals...');
+            // Get reviews for super deals
+            await getSuperDealsReviews(browser);
+            console.log('Reviews fetched and stored successfully.');
+            
+            console.log('All operations completed successfully.');
+        } catch (error) {
+            console.error('Error during scraping:', error);
+        } finally {
+            // Close browser always, especially in CI environments
+            await closeBrowser(browser);
+            // Clear the timeout
+            clearTimeout(scriptTimeout);
+        }
+    } catch (error) {
+        console.error('Fatal error:', error);
+        process.exit(1);
+    }
 })();
