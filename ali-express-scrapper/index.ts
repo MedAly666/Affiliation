@@ -50,6 +50,7 @@ async function getSuperDealsReviews( browser: Browser ): Promise<void> {
     const { data, error } = await supabase
             .from('products')
             .select('product_id, url, title')
+            .eq('is_reviewed', false)
 
     console.log(`Retrieved ${data?.length} products from the database.`);
 
@@ -78,6 +79,15 @@ async function getSuperDealsReviews( browser: Browser ): Promise<void> {
                 console.error('Error inserting reviews:', reviewError);
             } else {
                 console.log(`Inserted ${reviews.length} reviews for product: ${product.title}`);
+
+                // Update the product to mark it as reviewed
+                const { error: updateError } = await supabase
+                    .from('products')
+                    .update({ is_reviewed: true })
+                    .eq('product_id', product.product_id);
+                if (updateError) {
+                    console.error('Error updating product as reviewed:', updateError);
+                } 
             }
         }
     }

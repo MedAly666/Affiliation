@@ -33,6 +33,7 @@ export async function scrollToBottom(page: Page) {
 
 export async function changeCountryLanguageCurrency(page: Page) {
     // Click on the currency selector
+    await page.waitForSelector('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE', {timeout: 10000});
     await page.click('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE');
     // Wait for the currency selector to appear
     await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG', {timeout: 10000});
