@@ -115,13 +115,13 @@
 </script>
 
 <svelte:head>
-    <title>AliExpress Deals Explorer</title>
+    <title>Deals Hunter</title>
     <meta name="description" content="Discover the best deals from AliExpress" />
 </svelte:head>
 
 <header class="bg-gradient-to-r from-purple-600 to-blue-500 text-white py-8 px-4 shadow-md">
     <div class="container mx-auto">
-        <h1 class="text-4xl font-bold mb-2 text-center">AliExpress Deals Explorer</h1>
+        <h1 class="text-4xl font-bold mb-2 text-center">Deals Hunter</h1>
         <p class="text-center text-white/80 mb-6">Discover amazing deals updated daily</p>
         
         <div class="relative max-w-xl mx-auto">
@@ -294,7 +294,7 @@
 
 <footer class="bg-gray-800 text-white py-8 mt-12">
     <div class="container mx-auto px-4 text-center">
-        <p>© {new Date().getFullYear()} AliExpress Deals Explorer. Not affiliated with AliExpress or Alibaba Group.</p>
+        <p>© {new Date().getFullYear()} Deals Hunter. Not affiliated with AliExpress or Alibaba Group.</p>
         <p class="text-gray-400 text-sm mt-2">Products and prices are updated daily. All deals are subject to availability.</p>
     </div>
 </footer>

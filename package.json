@@ -1,8 +1,12 @@
 {
   "name": "affiliation",
   "private": true,
+  "scripts": {
+    "supabase": "supabase"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "supabase": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"

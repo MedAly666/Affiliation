@@ -1,7 +1,8 @@
-import puppeteer, { Browser, Page} from 'puppeteer';
+import { Browser } from 'puppeteer';
 
 import supabase from "../supabase";
-import { type Database } from "../database.types";
+
+import { launchBrowser, closeBrowser } from './browser';
 import getReviews from './reviews';
 import getProducts from './products';
 
@@ -9,21 +10,7 @@ import getProducts from './products';
 const SUPERDEALS_URL = 'https://www.aliexpress.com/ssr/300000444/GSDWp3p6aC?disableNav=YES&pha_manifest=ssr&_immersiveMode=true&wh_offline=true';
 
 
-async function launchBrowser(): Promise<Browser> {
-    const browser = await puppeteer.launch({
-        headless: false,
-        timeout: 100000,
-        defaultViewport: { width: 1024, height: 720 },
-        //args: ['--proxy-server=socks5://127.0.0.1:9050']
-    });
-    return browser;
-}
 
-async function closeBrowser(browser: Browser ) {
-    if (browser) {
-        //await browser.close();
-    }
-}
 
 async function getSuperDeals(browser: Browser): Promise<void> {
     if (!browser) {
@@ -53,25 +40,16 @@ async function getSuperDeals(browser: Browser): Promise<void> {
     
 }
 
-
-
-
-
-(async () => {
-    // Launch the browser with the specified options
-    console.log('Launching browser...');
-    const browser = await launchBrowser();
-    console.log('Browser launched successfully.');
-
-    // Get super deals
-    //await getSuperDeals(browser);
+async function getSuperDealsReviews( browser: Browser ): Promise<void> {
+    if (!browser) {
+        throw new Error('Browser instance is not provided');
+    }
 
 
     //Get Reviews for each product
-
     const { data, error } = await supabase
             .from('products')
-            .select('product_id, url')
+            .select('product_id, url, title')
 
     console.log(`Retrieved ${data?.length} products from the database.`);
 
@@ -103,6 +81,26 @@ async function getSuperDeals(browser: Browser): Promise<void> {
             }
         }
     }
+}
+
+(async () => {
+    // Launch the browser with the specified options
+    console.log('Launching browser...');
+    const browser = await launchBrowser();
+    console.log('Browser launched successfully.');
+
+    // Get super deals
+    await getSuperDeals(browser);
+    console.log('Super deals fetched and stored successfully.');
+    // Note: The browser will not be closed automatically here to allow for debugging.
+    console.log('Fetching reviews for super deals...');
+
+    // Get reviews for super deals
+    await getSuperDealsReviews(browser);
+    console.log('Reviews fetched and stored successfully.');
+    // Note: The browser will not be closed automatically here to allow for debugging.
+
+    console.log('All operations completed successfully.');
 
     //close browser
     await closeBrowser(browser)

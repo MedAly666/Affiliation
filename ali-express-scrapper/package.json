@@ -4,10 +4,16 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "supabase": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "scripts": {
+    "supabase": "supabase",
+    "start-server": "bun run edge/server.ts",
+    "scrape": "bun run index.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",
