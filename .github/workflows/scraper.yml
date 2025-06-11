@@ -31,7 +31,7 @@ jobs:
         working-directory: ./ali-express-scrapper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           CI: true
           GITHUB_ACTIONS: true
         run: bun run index.ts
