@@ -131,13 +131,13 @@ async function getSuperDealsImages(browser: Browser): Promise<void> {
             } else {
                 console.log(`Inserted ${images.length} images for product: ${product.title}`);
 
-                // Update the product to mark it as reviewed
+                // Update the product to mark it as imaged
                 const { error: updateError } = await supabase
                     .from('products')
-                    .update({ is_reviewed: true })
+                    .update({ is_imaged: true })
                     .eq('product_id', product.product_id);
                 if (updateError) {
-                    console.error('Error updating product as reviewed:', updateError);
+                    console.error('Error updating product as imaged:', updateError);
                 }
             }
         }
