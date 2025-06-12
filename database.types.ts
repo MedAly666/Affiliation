@@ -9,10 +9,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      images: {
+        Row: {
+          created_at: string
+          image_id: number
+          image_url: string
+          image_url_hash: string
+          product_id: number
+        }
+        Insert: {
+          created_at?: string
+          image_id?: number
+          image_url: string
+          image_url_hash: string
+          product_id: number
+        }
+        Update: {
+          created_at?: string
+          image_id?: number
+          image_url?: string
+          image_url_hash?: string
+          product_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "images_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["product_id"]
+          },
+        ]
+      }
       products: {
         Row: {
           created_at: string
           image: string | null
+          is_imaged: boolean
+          is_reviewed: boolean | null
           original_price: number | null
           price: number
           product_id: number
@@ -24,6 +58,8 @@ export type Database = {
         Insert: {
           created_at?: string
           image?: string | null
+          is_imaged?: boolean
+          is_reviewed?: boolean | null
           original_price?: number | null
           price: number
           product_id?: number
@@ -35,6 +71,8 @@ export type Database = {
         Update: {
           created_at?: string
           image?: string | null
+          is_imaged?: boolean
+          is_reviewed?: boolean | null
           original_price?: number | null
           price?: number
           product_id?: number
@@ -47,25 +85,25 @@ export type Database = {
       }
       reviews: {
         Row: {
-          comment: string | null
+          content: string | null
           created_at: string
           product_id: number
+          rating: number
           review_id: number
-          stars: number
         }
         Insert: {
-          comment?: string | null
+          content?: string | null
           created_at?: string
           product_id: number
+          rating: number
           review_id?: number
-          stars: number
         }
         Update: {
-          comment?: string | null
+          content?: string | null
           created_at?: string
           product_id?: number
+          rating?: number
           review_id?: number
-          stars?: number
         }
         Relationships: [
           {

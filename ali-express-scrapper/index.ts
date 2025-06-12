@@ -5,6 +5,7 @@ import supabase from "../supabase";
 import { launchBrowser, closeBrowser } from './browser';
 import getReviews from './reviews';
 import getProducts from './products';
+import getImages from './images';
 
 
 const SUPERDEALS_URL = 'https://www.aliexpress.com/ssr/300000444/GSDWp3p6aC?disableNav=YES&pha_manifest=ssr&_immersiveMode=true&wh_offline=true';
@@ -93,6 +94,56 @@ async function getSuperDealsReviews( browser: Browser ): Promise<void> {
     }
 }
 
+async function getSuperDealsImages(browser: Browser): Promise<void> {
+    if (!browser) {
+        throw new Error('Browser instance is not provided');
+    }
+
+    // Get images for each product
+    const { data, error } = await supabase
+        .from('products')
+        .select('product_id, url, title')
+        .eq('is_imaged', false);
+
+    console.log(`Retrieved ${data?.length} products from the database.`);
+
+    if (error) {
+        console.error('Error fetching products from database:', error);
+        await closeBrowser(browser);
+        return; // Exit if there's an error
+    }
+
+    for (let product of data) {
+        let images = await getImages(browser, product.url);
+
+        if (images.length > 0) {
+            const { error: imageError } = await supabase
+                .from('images')
+                .upsert(images.map(image => ({
+                    image_url: image.url,
+                    image_url_hash: image.hash,
+                    image_alt: image.alt,
+                    product_id: product.product_id,
+                })));
+
+            if (imageError) {
+                console.error('Error inserting images:', imageError);
+            } else {
+                console.log(`Inserted ${images.length} images for product: ${product.title}`);
+
+                // Update the product to mark it as reviewed
+                const { error: updateError } = await supabase
+                    .from('products')
+                    .update({ is_reviewed: true })
+                    .eq('product_id', product.product_id);
+                if (updateError) {
+                    console.error('Error updating product as reviewed:', updateError);
+                }
+            }
+        }
+    }
+}
+
 (async () => {
     try {
         // Set a global timeout for the entire script (2 hours max)
@@ -115,6 +166,9 @@ async function getSuperDealsReviews( browser: Browser ): Promise<void> {
             // Get reviews for super deals
             await getSuperDealsReviews(browser);
             console.log('Reviews fetched and stored successfully.');
+
+            await getSuperDealsImages(browser);
+            console.log('Images fetched and stored successfully.');
             
             console.log('All operations completed successfully.');
         } catch (error) {
