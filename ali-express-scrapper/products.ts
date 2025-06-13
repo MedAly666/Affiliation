@@ -1,5 +1,5 @@
 import type { Page } from "puppeteer";
-import { MD5 } from 'bun';
+import { MD5, sleep } from 'bun';
 
 const PRODUCT_SELECTOR = 'a.productContainer';
 const PRODUCT_TITLE_SELECTOR = 'div.aec-view>div.AIC-ATM-container span.AIC-ATM-multiLine span';
@@ -26,55 +26,64 @@ export async function scrollToBottom(page: Page) {
             setTimeout(() => {
                 clearInterval(interval);
                 resolve();
-            }, 10000);
+            }, 20000);
         });
     });
 }
 
 export async function changeCountryLanguageCurrency(page: Page) {
-    // Click on the currency selector
-    await page.waitForSelector('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE', {timeout: 10000});
-    await page.click('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE');
-    // Wait for the currency selector to appear
-    await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG', {timeout: 10000});
-    // Country
-    await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.select--text--1b85oDo');
-    await page.click('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB span.DZ');
+    try {
+            await page.waitForNetworkIdle();
 
-    //Language
-    await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.form-item--content--33yK8CE:nth-child(4)');
-    // Find and click element that contains العربية
-    await page.evaluate(() => {
-        const languageOptions = Array.from(document.querySelectorAll('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB'));
-        const arabicOption = languageOptions.find(option => option.textContent?.includes('العربية'));
-        if (arabicOption) {
-            (arabicOption as HTMLElement).click();
-        } else {
-            console.warn('Arabic option not found, selecting the first available language');
-            const firstOption = document.querySelector('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB') as HTMLElement;
-            if (firstOption) firstOption.click();
-        }
-    });
+        // Click on the currency selector
+        await page.waitForSelector('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE', {timeout: 10000});
+        await page.click('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE');
+        // Wait for the currency selector to appear
+        await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG', {timeout: 10000});
+        // Country
+        await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.select--text--1b85oDo');
+        await page.click('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB span.DZ');
 
-
-    // Currency
-    await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.form-item--content--33yK8CE:nth-child(6)');
-    // Find and click element that contains EUR
-    await page.evaluate(() => {
-        const currencyOptions = Array.from(document.querySelectorAll('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB'));
-        const eurOption = currencyOptions.find(option => option.textContent?.includes('EUR'));
-        if (eurOption) {
-            (eurOption as HTMLElement).click();
-        } else {
-            console.warn('EUR option not found, selecting the first available currency');
-            const firstOption = document.querySelector('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB') as HTMLElement;
-            if (firstOption) firstOption.click();
-        }
-    });
+        //Language
+        await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.form-item--content--33yK8CE:nth-child(4)');
+        // Find and click element that contains العربية
+        await page.evaluate(() => {
+            const languageOptions = Array.from(document.querySelectorAll('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB'));
+            const arabicOption = languageOptions.find(option => option.textContent?.includes('العربية'));
+            if (arabicOption) {
+                (arabicOption as HTMLElement).click();
+            } else {
+                console.warn('Arabic option not found, selecting the first available language');
+                const firstOption = document.querySelector('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB') as HTMLElement;
+                if (firstOption) firstOption.click();
+            }
+        });
 
 
-    await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.es--saveBtn--w8EuBuy')
-    await page.waitForNetworkIdle();
+        // Currency
+        await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.form-item--content--33yK8CE:nth-child(6)');
+        // Find and click element that contains EUR
+        await page.evaluate(() => {
+            const currencyOptions = Array.from(document.querySelectorAll('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB'));
+            const eurOption = currencyOptions.find(option => option.textContent?.includes('EUR'));
+            if (eurOption) {
+                (eurOption as HTMLElement).click();
+            } else {
+                console.warn('EUR option not found, selecting the first available currency');
+                const firstOption = document.querySelector('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB') as HTMLElement;
+                if (firstOption) firstOption.click();
+            }
+        });
+
+
+        await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.es--saveBtn--w8EuBuy')
+        await page.waitForNetworkIdle();
+        await sleep(5000);
+
+    } catch (error) {
+        console.error('Error changing country, language, and currency:', error);
+        throw new Error('Failed to change country, language, and currency');
+    }
 }
 
 export async function extractProductData( page: Page ) {
@@ -116,6 +125,7 @@ async function getProducts(page: Page): Promise<Product[]> {
     // Change the country, language, and currency
     console.log('Changing country, language, and currency...');
     await changeCountryLanguageCurrency(page);
+    await page.waitForNetworkIdle();
     console.log('Country, language, and currency changed successfully.');
     
     // Wait for the products to load
@@ -125,6 +135,7 @@ async function getProducts(page: Page): Promise<Product[]> {
     // Scroll to the bottom of the page to load all products
     console.log('Scrolling to the bottom of the page to load all products...');
     await scrollToBottom(page); 
+    await page.waitForNetworkIdle();
     console.log('Products loaded successfully.');
 
     // Extract product information

@@ -22,6 +22,8 @@ async function getReviews(browser: Browser, productUrl: string): Promise<Review[
     const page = await browser.newPage();
     await page.goto(productUrl, { waitUntil: 'networkidle2' });
 
+    await sleep(10000);
+
     try {
         // Wait for the "Load More" button to appear
         await page.waitForSelector(MORE_REVIEWS_BUTTON_SELECTOR, { timeout: 10000 });
@@ -33,11 +35,14 @@ async function getReviews(browser: Browser, productUrl: string): Promise<Review[
 
     // Click the "Load More" button to load all reviews
     await page.click(MORE_REVIEWS_BUTTON_SELECTOR);
+    await page.waitForNetworkIdle();
     console.log('Clicked "Load More" button to load reviews.');
     // Wait for the reviews to load after clicking "Load More"
     await sleep(10000); // Adjust the sleep time as needed
     // Wait for the reviews section to load
     await page.waitForSelector(REVIEW_SELECTOR, { timeout: 10000 });
+    await page.waitForNetworkIdle();
+
 
     // Extract reviews
     const reviews = await page.evaluate(() => {
