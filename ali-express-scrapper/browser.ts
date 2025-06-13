@@ -15,7 +15,7 @@ export async function launchBrowser(): Promise<Browser> {
             '--disable-accelerated-2d-canvas',
             '--disable-gpu',
             '--window-size=1024,720',
-            //--proxy-server=socks5://127.0.0.1:9050'
+            //'--proxy-server=socks5://127.0.0.1:9050'
         ]
     };
 

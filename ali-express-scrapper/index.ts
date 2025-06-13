@@ -6,12 +6,33 @@ import { launchBrowser, closeBrowser } from './browser';
 import getReviews from './reviews';
 import getProducts from './products';
 import getImages from './images';
+import { sleep } from 'bun';
 
-
+// Increased timeout values for better reliability
+const PAGE_TIMEOUT = 180000; // 3 minutes
 const SUPERDEALS_URL = 'https://www.aliexpress.com/ssr/300000444/GSDWp3p6aC?disableNav=YES&pha_manifest=ssr&_immersiveMode=true&wh_offline=true';
 
-
-
+// Helper function to retry operations with exponential backoff
+async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3, initialDelay = 5000): Promise<T> {
+    let retries = 0;
+    let delay = initialDelay;
+    
+    while (true) {
+        try {
+            return await operation();
+        } catch (error) {
+            retries++;
+            console.log(`Operation failed. Retry ${retries}/${maxRetries} in ${delay/1000}s...`);
+            
+            if (retries >= maxRetries) {
+                throw error;
+            }
+            
+            await sleep(delay);
+            delay *= 2; // Exponential backoff
+        }
+    }
+}
 
 async function getSuperDeals(browser: Browser): Promise<void> {
     if (!browser) {
@@ -23,78 +44,107 @@ async function getSuperDeals(browser: Browser): Promise<void> {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36');
     await page.setViewport({ width: 1280, height: 800 });
 
-    await page.goto(SUPERDEALS_URL, { waitUntil: 'domcontentloaded', timeout: 100000 });
-    await page.waitForNetworkIdle();
+    try {
+        console.log('Navigating to the page...');
+        await withRetry(async () => {
+            await page.goto(SUPERDEALS_URL, { 
+                waitUntil: 'domcontentloaded', 
+                timeout: PAGE_TIMEOUT 
+            });
+            console.log('Page loaded, waiting for network to idle...');
+            await page.waitForNetworkIdle({ timeout: PAGE_TIMEOUT });
+            console.log('Network is idle.');
+        });
 
-    let productData = await getProducts(page);
+        console.log('Starting to extract product data...');
+        let productData = await getProducts(page);
 
-    console.log('Product data extracted:', productData.length, 'products found.');
+        console.log('Product data extracted:', productData.length, 'products found.');
 
-    await page.close();
+        await page.close();
 
-
-    //store the data to supabase postgress database
-
-    for( let product of productData ){
-        const { error } = await supabase 
-            .from('products') 
-            .upsert (product);
-        
-        if( error ) console.log(error);
+        //store the data to supabase postgress database
+        console.log('Storing product data to database...');
+        for (let product of productData) {
+            const { error } = await supabase 
+                .from('products') 
+                .upsert(product);
+            
+            if (error) console.log('Database error:', error);
+        }
+        console.log('Product data stored successfully.');
+    } catch (error) {
+        console.error('Error in getSuperDeals:', error);
+        await page.close();
+        throw error;
     }
-    
 }
 
-async function getSuperDealsReviews( browser: Browser ): Promise<void> {
+async function getSuperDealsReviews(browser: Browser): Promise<void> {
     if (!browser) {
         throw new Error('Browser instance is not provided');
     }
 
+    try {
+        console.log('Fetching products that need reviews...');
+        //Get Reviews for each product
+        const { data, error } = await supabase
+                .from('products')
+                .select('product_id, url, title')
+                .eq('is_reviewed', false)
 
-    //Get Reviews for each product
-    const { data, error } = await supabase
-            .from('products')
-            .select('product_id, url, title')
-            .eq('is_reviewed', false)
+        console.log(`Retrieved ${data?.length} products from the database.`);
 
-    console.log(`Retrieved ${data?.length} products from the database.`);
+        if (error) {
+            console.error('Error fetching products from database:', error);
+            return; // Exit if there's an error
+        }
+                
+        for (let product of data) {
+            console.log(`Processing reviews for product: ${product.title} (${product.url})`);
+            try {
+                let reviews = await withRetry(() => getReviews(browser, product.url));
+                
+                if (reviews.length > 0) {
+                    console.log(`Found ${reviews.length} reviews for product: ${product.title}`);
+                    const { error: reviewError } = await supabase
+                        .from('reviews')
+                        .upsert(reviews.map(review => ({
+                            rating: review.rating,
+                            content: review.content,
+                            product_id: product.product_id,
+                        })));
 
-    
-    if (error) {
-        console.error('Error fetching products from database:', error);
-        await closeBrowser(browser);
-        return; // Exit if there's an error
-    }
-    
-            
+                    if (reviewError) {
+                        console.error('Error inserting reviews:', reviewError);
+                    } else {
+                        console.log(`Inserted ${reviews.length} reviews for product: ${product.title}`);
 
-    for( let product of data ){
-        let reviews = await getReviews(browser, product.url)
-        
-        if (reviews.length > 0) {
-            const { error: reviewError } = await supabase
-                .from('reviews')
-                .upsert(reviews.map(review => ({
-                    rating: review.rating,
-                    content: review.content,
-                    product_id : product.product_id,
-                })));
-
-            if (reviewError) {
-                console.error('Error inserting reviews:', reviewError);
-            } else {
-                console.log(`Inserted ${reviews.length} reviews for product: ${product.title}`);
-
-                // Update the product to mark it as reviewed
-                const { error: updateError } = await supabase
-                    .from('products')
-                    .update({ is_reviewed: true })
-                    .eq('product_id', product.product_id);
-                if (updateError) {
-                    console.error('Error updating product as reviewed:', updateError);
-                } 
+                        // Update the product to mark it as reviewed
+                        const { error: updateError } = await supabase
+                            .from('products')
+                            .update({ is_reviewed: true })
+                            .eq('product_id', product.product_id);
+                        if (updateError) {
+                            console.error('Error updating product as reviewed:', updateError);
+                        } 
+                    }
+                } else {
+                    console.log(`No reviews found for product: ${product.title}`);
+                    // Mark as reviewed even if no reviews found to avoid reprocessing
+                    const { error: updateError } = await supabase
+                        .from('products')
+                        .update({ is_reviewed: true })
+                        .eq('product_id', product.product_id);
+                }
+            } catch (error) {
+                console.error(`Failed to process reviews for product: ${product.title}`, error);
+                // Continue with the next product
             }
         }
+    } catch (error) {
+        console.error('Error in getSuperDealsReviews:', error);
+        throw error;
     }
 }
 
@@ -103,74 +153,96 @@ async function getSuperDealsImages(browser: Browser): Promise<void> {
         throw new Error('Browser instance is not provided');
     }
 
-    // Get images for each product
-    const { data, error } = await supabase
-        .from('products')
-        .select('product_id, url, title')
-        .eq('is_imaged', false);
+    try {
+        console.log('Fetching products that need images...');
+        // Get images for each product
+        const { data, error } = await supabase
+            .from('products')
+            .select('product_id, url, title')
+            .eq('is_imaged', false);
 
-    console.log(`Retrieved ${data?.length} products from the database.`);
+        console.log(`Retrieved ${data?.length} products from the database.`);
 
-    if (error) {
-        console.error('Error fetching products from database:', error);
-        await closeBrowser(browser);
-        return; // Exit if there's an error
-    }
+        if (error) {
+            console.error('Error fetching products from database:', error);
+            return; // Exit if there's an error
+        }
 
-    for (let product of data) {
-        let images = await getImages(browser, product.url);
+        for (let product of data) {
+            console.log(`Processing images for product: ${product.title} (${product.url})`);
+            try {
+                let images = await withRetry(() => getImages(browser, product.url));
 
-        if (images.length > 0) {
-            const { error: imageError } = await supabase
-                .from('images')
-                .upsert(images.map(image => ({
-                    image_url: image.url,
-                    image_url_hash: image.hash,
-                    image_alt: image.alt,
-                    product_id: product.product_id,
-                })));
+                if (images.length > 0) {
+                    console.log(`Found ${images.length} images for product: ${product.title}`);
+                    const { error: imageError } = await supabase
+                        .from('images')
+                        .upsert(images.map(image => ({
+                            image_url: image.url,
+                            image_url_hash: image.hash,
+                            image_alt: image.alt,
+                            product_id: product.product_id,
+                        })));
 
-            if (imageError) {
-                console.error('Error inserting images:', imageError);
-            } else {
-                console.log(`Inserted ${images.length} images for product: ${product.title}`);
+                    if (imageError) {
+                        console.error('Error inserting images:', imageError);
+                    } else {
+                        console.log(`Inserted ${images.length} images for product: ${product.title}`);
 
-                // Update the product to mark it as imaged
-                const { error: updateError } = await supabase
-                    .from('products')
-                    .update({ is_imaged: true })
-                    .eq('product_id', product.product_id);
-                if (updateError) {
-                    console.error('Error updating product as imaged:', updateError);
+                        // Update the product to mark it as imaged
+                        const { error: updateError } = await supabase
+                            .from('products')
+                            .update({ is_imaged: true })
+                            .eq('product_id', product.product_id);
+                        if (updateError) {
+                            console.error('Error updating product as imaged:', updateError);
+                        }
+                    }
+                } else {
+                    console.log(`No images found for product: ${product.title}`);
+                    // Mark as imaged even if no images found to avoid reprocessing
+                    const { error: updateError } = await supabase
+                        .from('products')
+                        .update({ is_imaged: true })
+                        .eq('product_id', product.product_id);
                 }
+            } catch (error) {
+                console.error(`Failed to process images for product: ${product.title}`, error);
+                // Continue with the next product
             }
         }
+    } catch (error) {
+        console.error('Error in getSuperDealsImages:', error);
+        throw error;
     }
 }
 
 (async () => {
+    let browser;
     try {
-        // Set a global timeout for the entire script (2 hours max)
+        // Set a global timeout for the entire script (3 hours max)
         const scriptTimeout = setTimeout(() => {
-            console.error("Script execution timed out after 2 hours");
+            console.error("Script execution timed out after 3 hours");
             process.exit(1);
-        }, 2 * 60 * 60 * 1000);
+        }, 3 * 60 * 60 * 1000);
 
         // Launch the browser with the specified options
         console.log('Launching browser...');
-        const browser = await launchBrowser();
+        browser = await withRetry(() => launchBrowser());
         console.log('Browser launched successfully.');
 
         try {
             // Get super deals
+            console.log('Starting to fetch super deals...');
             await getSuperDeals(browser);
             console.log('Super deals fetched and stored successfully.');
             
-            console.log('Fetching reviews for super deals...');
+            console.log('Starting to fetch reviews for super deals...');
             // Get reviews for super deals
             await getSuperDealsReviews(browser);
             console.log('Reviews fetched and stored successfully.');
 
+            console.log('Starting to fetch images for super deals...');
             await getSuperDealsImages(browser);
             console.log('Images fetched and stored successfully.');
             
@@ -178,13 +250,18 @@ async function getSuperDealsImages(browser: Browser): Promise<void> {
         } catch (error) {
             console.error('Error during scraping:', error);
         } finally {
-            // Close browser always, especially in CI environments
-            await closeBrowser(browser);
             // Clear the timeout
             clearTimeout(scriptTimeout);
         }
     } catch (error) {
         console.error('Fatal error:', error);
         process.exit(1);
+    } finally {
+        // Close browser always, especially in CI environments
+        if (browser) {
+            console.log('Closing browser...');
+            await closeBrowser(browser);
+            console.log('Browser closed successfully.');
+        }
     }
 })();
