@@ -20,10 +20,12 @@ async function getSuperDeals(browser: Browser): Promise<void> {
     // Open a new page and navigate to the super deals URL
     console.log('Opening page:', SUPERDEALS_URL);
     const page = await browser.newPage();
-    await page.goto(SUPERDEALS_URL, { waitUntil:'networkidle2'});
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36');
+    await page.setViewport({ width: 1280, height: 800 });
+
+    await page.goto(SUPERDEALS_URL, { waitUntil: 'domcontentloaded', timeout: 100000 });
     await page.waitForNetworkIdle();
 
-    
     let productData = await getProducts(page);
 
     console.log('Product data extracted:', productData.length, 'products found.');
