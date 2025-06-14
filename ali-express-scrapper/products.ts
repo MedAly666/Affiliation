@@ -121,13 +121,18 @@ export async function changeCountryLanguageCurrency(page: Page) {
         // Click on the Country/Language/Currency selector
         await page.waitForSelector('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE', {timeout: 10000});
         await page.click('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE');
-        // Wait for the currency selector to appear
+        // Wait for the Country/Language/Currency selector to appear
         await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG', {timeout: 10000});
+        await sleep(5000);
+
         // Country
+        await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.select--text--1b85oDo');
         await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.select--text--1b85oDo');
         await page.click('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB span.DZ');
+        await sleep(5000);
 
         //Language
+        await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.form-item--content--33yK8CE:nth-child(4)');
         await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.form-item--content--33yK8CE:nth-child(4)');
         // Find and click element that contains العربية
         await page.evaluate(() => {
@@ -141,9 +146,10 @@ export async function changeCountryLanguageCurrency(page: Page) {
                 if (firstOption) firstOption.click();
             }
         });
-
+        await sleep(5000);
 
         // Currency
+        await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.form-item--content--33yK8CE:nth-child(6)');
         await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.form-item--content--33yK8CE:nth-child(6)');
         // Find and click element that contains EUR
         await page.evaluate(() => {
@@ -157,8 +163,10 @@ export async function changeCountryLanguageCurrency(page: Page) {
                 if (firstOption) firstOption.click();
             }
         });
+        await sleep(5000);
 
-
+        // Wait for the save button to be available and click it
+        await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.es--saveBtn--w8EuBuy', {timeout: 10000});
         await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.es--saveBtn--w8EuBuy')
         await page.waitForNetworkIdle();
         await sleep(5000);
