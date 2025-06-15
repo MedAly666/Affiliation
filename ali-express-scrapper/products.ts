@@ -124,8 +124,6 @@ export async function changeCountryLanguageCurrency(page: Page) {
         // Wait for the Country/Language/Currency selector to appear
         await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG', {timeout: 10000});
         await sleep(5000);
-
-        // Country
         await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.select--text--1b85oDo');
         await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.select--text--1b85oDo');
         await page.click('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB span.DZ');

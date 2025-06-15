@@ -1,4 +1,4 @@
-import { Browser } from 'puppeteer';
+import { Browser, Page } from 'puppeteer';
 
 import supabase from "../supabase";
 
@@ -215,6 +215,27 @@ async function getSuperDealsImages(browser: Browser): Promise<void> {
         console.error('Error in getSuperDealsImages:', error);
         throw error;
     }
+}
+
+async function getSuperDealsReviewsAndImages(browser: Browser): Promise<void> {
+    if (!browser) {
+        throw new Error('Browser instance is not provided');
+    }
+
+    try {
+        console.log('Fetching reviews and images for super deals...');
+        // Get reviews
+        await getSuperDealsReviews(browser);
+        console.log('Reviews fetched successfully.');
+
+        // Get images
+        await getSuperDealsImages(browser);
+        console.log('Images fetched successfully.');
+    } catch (error) {
+        console.error('Error in getSuperDealsReviewsAndImages:', error);
+        throw error;
+    }
+    
 }
 
 (async () => {
