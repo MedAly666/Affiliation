@@ -10,7 +10,7 @@ import { sleep } from 'bun';
 
 // Increased timeout values for better reliability
 const PAGE_TIMEOUT = 180000; // 3 minutes
-const SUPERDEALS_URL = 'https://www.aliexpress.com/ssr/300000444/GSDWp3p6aC?disableNav=YES&pha_manifest=ssr&_immersiveMode=true&wh_offline=true';
+const SUPERDEALS_URL = 'https://ar.aliexpress.com/ssr/300000444/GSDWp3p6aC?disableNav=YES&pha_manifest=ssr&_immersiveMode=true&wh_offline=true';
 
 // Helper function to retry operations with exponential backoff
 async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3, initialDelay = 5000): Promise<T> {
@@ -220,11 +220,11 @@ async function getSuperDealsImages(browser: Browser): Promise<void> {
 (async () => {
     let browser;
     try {
-        // Set a global timeout for the entire script (3 hours max)
+        // Set a global timeout for the entire script (5 hours max)
         const scriptTimeout = setTimeout(() => {
-            console.error("Script execution timed out after 3 hours");
+            console.error("Script execution timed out after 5 hours");
             process.exit(1);
-        }, 3 * 60 * 60 * 1000);
+        }, 5 * 60 * 60 * 1000);
 
         // Launch the browser with the specified options
         console.log('Launching browser...');
