@@ -390,8 +390,9 @@
                     {#if productImages.length > 0}
                         <Carousel
                             class="rounded-lg h-[300px] md:h-[400px]"
+                            imgClass="object-contain h-full w-fit rounded-xs"
                             images={productImages.map(img => ({
-                                src: img.image_url,
+                                src: img.image_url.replace('jpg_220x220q75.jpg','jpg_960x960q75.jpg'),
                                 alt: img.image_alt || selectedProduct?.title
                             }))}
                             duration={0}
@@ -401,11 +402,13 @@
                                 <Indicators />
                             {/if}
                             {#if productImages.length > 1}
-                                <Thumbnails  
+                                <Thumbnails 
+                                    
                                     images={productImages.map(img => ({
-                                        src: img.image_url,
+                                        src: img.image_url.replace('jpg_960x960q75.jpg','jpg_220x220q75.jpg'),
                                         alt: img.image_alt || selectedProduct?.title
                                     }))}
+
                                 />                                
                             {/if}
                         </Carousel>
