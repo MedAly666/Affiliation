@@ -187,13 +187,13 @@ export async function extractProductData(page: Page) {
             const product = products[i];
             console.log(`Processing product ${i + 1}/${products.length}`);
             
-            const titleElement = await product.$(PRODUCT_TITLE_SELECTOR);
-            const imageElement = await product.$(PRODUCT_IMAGE_SELECTOR);
-            const currentPriceElement = await product.$(PRODUCT_CURRENT_PRICE_SELECTOR);
-            const originalPriceElement = await product.$(PRODUCT_ORIGINAL_PRICE_SELECTOR);
-            
+            const titleElement = await product?.$(PRODUCT_TITLE_SELECTOR);
+            const imageElement = await product?.$(PRODUCT_IMAGE_SELECTOR);
+            const currentPriceElement = await product?.$(PRODUCT_CURRENT_PRICE_SELECTOR);
+            const originalPriceElement = await product?.$(PRODUCT_ORIGINAL_PRICE_SELECTOR);
+
             // Extract the product URL
-            const url = await page.evaluate(el => el.href || '', product).then(href => {
+            const url = await page.evaluate(el => el?.href || '', product).then(href => {
                 // Remove query parameters if any
                 return (href || '').split('?')[0]; 
             });
@@ -219,13 +219,13 @@ export async function extractProductData(page: Page) {
             try {
                 processedCurrentPrice = currentPrice.replace('€', '').trim();
             } catch (e) {
-                console.log(`Error processing current price for product ${i + 1}:`, e.message);
+                console.log(`Error processing current price for product ${i + 1}:`, e instanceof Error ? e.message : String(e));
             }
             
             try {
                 processedOriginalPrice = originalPrice.replace('€', '').trim();
             } catch (e) {
-                console.log(`Error processing original price for product ${i + 1}:`, e.message);
+                console.log(`Error processing original price for product ${i + 1}:`, e instanceof Error ? e.message : String(e));
             }
             
             // Create product data object
@@ -263,8 +263,9 @@ async function getProducts(page: Page): Promise<Product[]> {
         try {
             await page.waitForSelector(PRODUCT_SELECTOR, { timeout: PAGE_TIMEOUT });
             console.log('Product selector found');
-        } catch (error) {
-            console.log('Product selector not found, but continuing anyway:', error.message);
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.log('Product selector not found, but continuing anyway:', errorMessage);
         }
 
         // Scroll to the bottom of the page to load all products
@@ -275,8 +276,9 @@ async function getProducts(page: Page): Promise<Product[]> {
         try {
             await page.waitForNetworkIdle({ timeout: 30000 });
             console.log('Network is idle');
-        } catch (error) {
-            console.log('Network did not reach idle state, continuing anyway:', error.message);
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.log('Network did not reach idle state, continuing anyway:', errorMessage);
         }
 
         // Extract product information

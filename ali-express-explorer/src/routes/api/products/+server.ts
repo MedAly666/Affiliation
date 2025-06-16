@@ -20,7 +20,7 @@ export const GET: RequestHandler = async ({ url }) => {
     .from('products')
     .select('*')
     .order('created_at', { ascending: false })
-    .gte('created_at', fortyEightHoursAgo)
+    .gte('updated_at', fortyEightHoursAgo)
     .range(offset, offset + limit - 1);
   
   if (error) {

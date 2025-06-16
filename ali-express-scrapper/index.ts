@@ -66,11 +66,42 @@ async function getSuperDeals(browser: Browser): Promise<void> {
         //store the data to supabase postgress database
         console.log('Storing product data to database...');
         for (let product of productData) {
-            const { error } = await supabase 
-                .from('products') 
-                .upsert(product);
+            // First check if the product already exists in the database
+            const { data, error: checkError } = await supabase
+                .from('products')
+                .select('product_id')
+                .eq('url_hash', product.url_hash)
+                .maybeSingle();
             
-            if (error) console.log('Database error:', error);
+            if (checkError) {
+                console.log('Error checking for existing product:', checkError);
+                continue;
+            }
+            
+            if (data) {
+                // Product exists, only update the updated_at field
+                const { error: updateError } = await supabase
+                    .from('products')
+                    .update({ updated_at: new Date().toISOString() })
+                    .eq('product_id', data.product_id);
+                
+                if (updateError) {
+                    console.log('Error updating product timestamp:', updateError);
+                } else {
+                    console.log(`Updated timestamp for existing product: ${product.title}`);
+                }
+            } else {
+                // Product doesn't exist, insert the full record                
+                const { error: insertError } = await supabase
+                    .from('products')
+                    .insert(product);
+                
+                if (insertError) {
+                    console.log('Error inserting new product:', insertError);
+                } else {
+                    console.log(`Inserted new product: ${product.title}`);
+                }
+            }
         }
         console.log('Product data stored successfully.');
     } catch (error) {
