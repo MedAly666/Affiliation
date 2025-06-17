@@ -200,7 +200,7 @@
     </div>
 </header>
 
-<main class="container mx-auto px-4 py-8">
+<main class="container mx-auto px-4 py-8" >
     
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
         <div class="lg:col-span-1 bg-white p-4 rounded-lg shadow-sm border">
@@ -293,7 +293,7 @@
                             </div>
 
                             <div class="flex-grow p-4">
-                                <h5 class="text-lg font-semibold line-clamp-3 mb-3 group-hover:text-purple-700 transition-colors">
+                                <h5 dir="rtl" class="text-lg font-semibold line-clamp-3 mb-3 group-hover:text-purple-700 transition-colors ">
                                     {product.title}
                                 </h5>
 
@@ -380,7 +380,7 @@
         <div class="relative">
             
             <!-- Product title -->
-            <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 pr-10">
+            <h3 dir="rtl" class="text-xl md:text-2xl font-bold text-gray-900 mb-4 pr-10 ">
                 {selectedProduct.title}
             </h3>
             
@@ -397,13 +397,13 @@
                             }))}
                             duration={0}
                         >
-                            <Controls />
+                            <Controls class="bg-gray-100 text-gray-500" />
                             {#if productImages.length > 1}
                                 <Indicators />
                             {/if}
                             {#if productImages.length > 1}
                                 <Thumbnails 
-                                    
+                                    index={0}
                                     images={productImages.map(img => ({
                                         src: img.image_url.replace('jpg_960x960q75.jpg','jpg_220x220q75.jpg'),
                                         alt: img.image_alt || selectedProduct?.title
