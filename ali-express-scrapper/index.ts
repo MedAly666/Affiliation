@@ -9,7 +9,7 @@ import getImages from './images';
 import { sleep } from 'bun';
 
 // Increased timeout values for better reliability
-const PAGE_TIMEOUT = 180000; // 3 minutes
+const PAGE_TIMEOUT = 50000; // 50 seconds
 const SUPERDEALS_URL = 'https://ar.aliexpress.com/ssr/300000444/GSDWp3p6aC?disableNav=YES&pha_manifest=ssr&_immersiveMode=true&wh_offline=true';
 
 // Helper function to retry operations with exponential backoff
@@ -49,7 +49,7 @@ async function getSuperDeals(browser: Browser): Promise<void> {
         await withRetry(async () => {
             await page.goto(SUPERDEALS_URL, { 
                 waitUntil: 'domcontentloaded', 
-                timeout: PAGE_TIMEOUT 
+                //timeout: PAGE_TIMEOUT 
             });
             console.log('Page loaded, waiting for network to idle...');
             await page.waitForNetworkIdle({ timeout: PAGE_TIMEOUT });
