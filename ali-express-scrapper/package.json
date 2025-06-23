@@ -12,7 +12,8 @@
   },
   "scripts": {
     "supabase": "supabase",
-    "start-server": "bun run edge/server.ts",
+    "start": "bun run server.ts",
+    "start-server": "bun run server.ts",
     "scrape": "bun run index.ts"
   },
   "dependencies": {
