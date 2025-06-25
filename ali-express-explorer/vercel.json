@@ -1,0 +1,8 @@
+{
+  "cron": [
+    {
+      "path": "/api/scrape-superdeals",
+      "schedule": "0 */6 * * *"
+    }
+  ]
+}
