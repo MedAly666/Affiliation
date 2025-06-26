@@ -55,5 +55,5 @@ RUN bun install
 # Copy the rest of the application
 COPY . .
 
-# Command to run the server by default (processes will override this when needed)
-CMD ["bun", "run", "server.ts"]
+# Command to run the script
+CMD ["bun", "run", "index.ts"]
