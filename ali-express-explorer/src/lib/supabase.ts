@@ -1,9 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
-import { env } from '$env/dynamic/private';
+import { SUPABASE_URL, SUPABASE_KEY } from '$env/static/private';
 
-const supabaseUrl = env.SUPABASE_URL || '';
-const supabaseKey = env.SUPABASE_KEY || '';
-
+const supabaseUrl = SUPABASE_URL || '';
+const supabaseKey = SUPABASE_KEY || '';
 
 if (!supabaseUrl || !supabaseKey) {
   throw new Error('Supabase URL and Key must be provided');

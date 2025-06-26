@@ -12,7 +12,9 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@supabase/supabase-js": "^2.50.0"
+		"@supabase/supabase-js": "^2.50.0",
+		"puppeteer": "^24.10.2",
+		"puppeteer-core": "^24.10.2"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^6.0.0",

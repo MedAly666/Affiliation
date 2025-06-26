@@ -6,7 +6,7 @@ import { launchBrowser, closeBrowser } from './browser';
 import getReviews from './reviews';
 import getProducts from './products';
 import getImages from './images';
-import { sleep } from 'bun';
+import { sleep } from './utils';
 
 // Increased timeout values for better reliability
 const PAGE_TIMEOUT = 50000; // 50 seconds
@@ -34,7 +34,7 @@ async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3, initial
     }
 }
 
-async function getSuperDeals(browser: Browser): Promise<void> {
+export async function getSuperDeals(browser: Browser): Promise<void> {
     if (!browser) {
         throw new Error('Browser instance is not provided');
     }
@@ -111,7 +111,7 @@ async function getSuperDeals(browser: Browser): Promise<void> {
     }
 }
 
-async function getSuperDealsReviews(browser: Browser): Promise<void> {
+export async function getSuperDealsReviews(browser: Browser): Promise<void> {
     if (!browser) {
         throw new Error('Browser instance is not provided');
     }
@@ -179,7 +179,7 @@ async function getSuperDealsReviews(browser: Browser): Promise<void> {
     }
 }
 
-async function getSuperDealsImages(browser: Browser): Promise<void> {
+export async function getSuperDealsImages(browser: Browser): Promise<void> {
     if (!browser) {
         throw new Error('Browser instance is not provided');
     }
@@ -248,7 +248,7 @@ async function getSuperDealsImages(browser: Browser): Promise<void> {
     }
 }
 
-async function getSuperDealsReviewsAndImages(browser: Browser): Promise<void> {
+export async function getSuperDealsReviewsAndImages(browser: Browser): Promise<void> {
     if (!browser) {
         throw new Error('Browser instance is not provided');
     }

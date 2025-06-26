@@ -12,11 +12,14 @@
   },
   "scripts": {
     "supabase": "supabase",
-    "start-server": "bun run edge/server.ts",
+    "start": "bun run server.ts",
+    "start-server": "bun run server.ts",
     "scrape": "bun run index.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",
+    "@types/md5": "^2.3.5",
+    "md5": "^2.3.0",
     "puppeteer": "^24.10.0",
     "puppeteer-core": "^24.10.0"
   }

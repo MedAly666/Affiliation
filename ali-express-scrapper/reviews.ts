@@ -1,5 +1,5 @@
-import { sleep } from "bun";
 import { Browser, Page } from "puppeteer";
+import { sleep } from "./utils";
 
 type Review = {
     rating: number;
