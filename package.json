@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "supabase": "supabase",
-    "start-scrapper": "bun run .ali-express-scrapper/index.ts"
+    "start-scrapper": "bun run ./ali-express-scrapper/index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
