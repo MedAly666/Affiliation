@@ -1,5 +1,6 @@
 import { Browser, Page } from 'puppeteer';
-import { MD5, sleep } from "bun";
+import { sleep } from "./utils";
+import md5 from 'md5';
 
 export type Image = {
     url: string;
@@ -64,7 +65,7 @@ async function getImages(browser: Browser, productUrl: string): Promise<Image[]>
         console.log('Extracting image data...');
         const images = (await extractImagesData(page)).map(image => ({
             ...image,
-            hash: new MD5().update(image.url).digest('hex') // Calculate MD5 hash of the image URL
+            hash: md5(image.url) // Calculate MD5 hash of the image URL
         }));
         console.log(`Found ${images.length} images for product: ${productUrl}`);
         if (images.length === 0) {

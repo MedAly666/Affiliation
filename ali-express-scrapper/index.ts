@@ -6,7 +6,7 @@ import { launchBrowser, closeBrowser } from './browser';
 import getReviews from './reviews';
 import getProducts from './products';
 import getImages from './images';
-import { sleep } from 'bun';
+import { sleep } from './utils';
 
 // Increased timeout values for better reliability
 const PAGE_TIMEOUT = 50000; // 50 seconds

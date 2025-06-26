@@ -1,5 +1,6 @@
 import type { Page } from "puppeteer";
-import { MD5, sleep } from 'bun';
+import { sleep } from './utils';
+import md5 from 'md5';
 
 const PRODUCT_SELECTOR = 'a.productContainer';
 const PRODUCT_TITLE_SELECTOR = 'div.aec-view>div.AIC-ATM-container span.AIC-ATM-multiLine span';
@@ -204,7 +205,7 @@ export async function extractProductData(page: Page) {
             }
             
             // Calculate MD5 hash of the URL
-            const urlHash = new MD5().update(url).digest('hex');
+            const urlHash = md5(url);
             
             // Extract other data
             const title = titleElement ? await page.evaluate(el => el.textContent || '', titleElement) : 'No title';
