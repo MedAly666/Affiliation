@@ -29,6 +29,7 @@ async function scrapeAliExpressSuperDeals() {
         } catch (err) {
             summary.errors.push('getSuperDealsReviews: ' + String(err));
         }
+        
 
         // Scrape images
         try {
