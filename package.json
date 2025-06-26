@@ -2,7 +2,8 @@
   "name": "affiliation",
   "private": true,
   "scripts": {
-    "supabase": "supabase"
+    "supabase": "supabase",
+    "start-scrapper": "bun run .ali-express-scrapper/index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
