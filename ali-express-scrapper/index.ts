@@ -49,7 +49,7 @@ export async function getSuperDeals(browser: Browser): Promise<void> {
         await withRetry(async () => {
             await page.goto(SUPERDEALS_URL, { 
                 waitUntil: 'domcontentloaded', 
-                //timeout: PAGE_TIMEOUT 
+                timeout: PAGE_TIMEOUT 
             });
             console.log('Page loaded, waiting for network to idle...');
             await page.waitForNetworkIdle({ timeout: PAGE_TIMEOUT });
