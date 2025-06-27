@@ -399,9 +399,6 @@
                         >
                             <Controls class="bg-gray-100 text-gray-500" />
                             {#if productImages.length > 1}
-                                <Indicators />
-                            {/if}
-                            {#if productImages.length > 1}
                                 <Thumbnails 
                                     index={0}
                                     images={productImages.map(img => ({
