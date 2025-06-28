@@ -160,13 +160,6 @@ export async function getSuperDealsReviews(browser: Browser): Promise<void> {
                             console.error('Error updating product as reviewed:', updateError);
                         } 
                     }
-                } else {
-                    console.log(`No reviews found for product: ${product.title}`);
-                    // Mark as reviewed even if no reviews found to avoid reprocessing
-                    const { error: updateError } = await supabase
-                        .from('products')
-                        .update({ is_reviewed: true })
-                        .eq('product_id', product.product_id);
                 }
             } catch (error) {
                 console.error(`Failed to process reviews for product: ${product.title}`, error);
@@ -229,13 +222,6 @@ export async function getSuperDealsImages(browser: Browser): Promise<void> {
                             console.error('Error updating product as imaged:', updateError);
                         }
                     }
-                } else {
-                    console.log(`No images found for product: ${product.title}`);
-                    // Mark as imaged even if no images found to avoid reprocessing
-                    const { error: updateError } = await supabase
-                        .from('products')
-                        .update({ is_imaged: true })
-                        .eq('product_id', product.product_id);
                 }
             } catch (error) {
                 console.error(`Failed to process images for product: ${product.title}`, error);
