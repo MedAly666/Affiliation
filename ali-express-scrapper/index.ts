@@ -123,6 +123,7 @@ export async function getSuperDealsReviews(browser: Browser): Promise<void> {
                 .from('products')
                 .select('product_id, url, title')
                 .eq('is_reviewed', false)
+                .order('created_at', { ascending: false });
 
         console.log(`Retrieved ${data?.length} products from the database.`);
 
@@ -183,7 +184,8 @@ export async function getSuperDealsImages(browser: Browser): Promise<void> {
         const { data, error } = await supabase
             .from('products')
             .select('product_id, url, title')
-            .eq('is_imaged', false);
+            .eq('is_imaged', false)
+            .order('created_at', { ascending: false });
 
         console.log(`Retrieved ${data?.length} products from the database.`);
 
