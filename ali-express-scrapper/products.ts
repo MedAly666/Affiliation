@@ -32,103 +32,22 @@ export async function scrollToBottom(page: Page) {
     });
 }
 
-/*export async function changeCountryLanguageCurrency(page: Page) {
-    try {
-        console.log('Attempting to change country, language, and currency...');
-        
-        // Try to wait for the network to be idle first
-        try {
-            await page.waitForNetworkIdle({ timeout: 30000 });
-        } catch (error) {
-            console.log('Network did not reach idle state, continuing anyway');
-        }
-        
-        // Try to find the currency selector with different strategies
-        let currencySelectorFound = false;
-        
-        // First attempt with the original selector
-        try {
-            console.log('Trying original currency selector...');
-            const selectorExists = await page.evaluate(() => {
-                return !!document.querySelector('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE');
-            });
-            
-            if (selectorExists) {
-                console.log('Original currency selector found, clicking it');
-                await page.click('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE');
-                currencySelectorFound = true;
-            } else {
-                console.log('Original currency selector not found');
-            }
-        } catch (error) {
-            console.log('Error with original currency selector:', error.message);
-        }
-        
-        if (!currencySelectorFound) {
-            console.log('Skipping country/language/currency change, proceeding with default settings');
-            return;
-        }
-        
-        // Wait a bit for the dropdown to appear
-        await sleep(5000);
-        
-        // Try to skip this part if it fails
-        try {
-            console.log('Waiting for currency dropdown...');
-            await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG', {timeout: 30000});
-            console.log('Currency dropdown appeared');
-            
-            // Country - only try, don't fail if it doesn't work
-            try {
-                await sleep(2000); // Short pause
-                console.log('Selecting country...');
-                await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.select--text--1b85oDo');
-                await sleep(2000);
-                await page.click('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB span.DZ');
-                console.log('Country selected');
-            } catch (error) {
-                console.log('Failed to select country, continuing anyway:', error.message);
-            }
-            
-            // Try to click the save button directly without further changes
-            try {
-                console.log('Attempting to save settings...');
-                await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.es--saveBtn--w8EuBuy');
-                console.log('Settings saved');
-            } catch (error) {
-                console.log('Failed to save settings, continuing anyway:', error.message);
-            }
-            
-        } catch (error) {
-            console.log('Currency dropdown not found or other error, continuing anyway:', error.message);
-        }
-        
-        // Wait a bit for the page to update after settings change
-        await sleep(5000);
-        console.log('Proceeding with available settings');
-        
-    } catch (error) {
-        console.error('Error in changeCountryLanguageCurrency:', error);
-        console.log('Continuing without changing country/language/currency');
-    }
-}*/
-
 export async function changeCountryLanguageCurrency(page: Page) {
     try {
         console.log('Attempting to change country, language, and currency...');
 
-        await page.waitForNetworkIdle({ timeout: 30000 });
+        await sleep(3000); // Wait for the page to load properly
 
         // Click on the Country/Language/Currency selector
         await page.waitForSelector('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE', {timeout: 10000});
         await page.click('div.ship-to--menuItem--WdBDsYl.ship-to--newMenuItem--2Rw-XvE');
         // Wait for the Country/Language/Currency selector to appear
         await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG', {timeout: 10000});
-        await sleep(5000);
+        await sleep(3000);
         await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.select--text--1b85oDo');
         await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.select--text--1b85oDo');
         await page.click('div.select--popup--W2YwXWt.select--visiblePopup--VUtkTX2 div.select--item--32FADYB span.DZ');
-        await sleep(5000);
+        await sleep(3000);
 
         //Language
         await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.form-item--content--33yK8CE:nth-child(4)');
@@ -145,7 +64,7 @@ export async function changeCountryLanguageCurrency(page: Page) {
                 if (firstOption) firstOption.click();
             }
         });
-        await sleep(5000);
+        await sleep(3000);
 
         // Currency
         await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.form-item--content--33yK8CE:nth-child(6)');
@@ -162,13 +81,12 @@ export async function changeCountryLanguageCurrency(page: Page) {
                 if (firstOption) firstOption.click();
             }
         });
-        await sleep(5000);
+        await sleep(3000);
 
         // Wait for the save button to be available and click it
         await page.waitForSelector('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.es--saveBtn--w8EuBuy', {timeout: 10000});
         await page.click('div.es--contentWrap--ypzOXHr.es--visible--12ePDdG div.es--saveBtn--w8EuBuy')
-        await page.waitForNetworkIdle();
-        await sleep(5000);
+        await sleep(3000);
 
     } catch (error) {
         console.error('Error changing country, language, and currency:', error);
@@ -273,14 +191,6 @@ async function getProducts(page: Page): Promise<Product[]> {
         console.log('Scrolling to the bottom of the page to load all products...');
         await scrollToBottom(page); 
         console.log('Scrolling completed');
-        
-        try {
-            await page.waitForNetworkIdle({ timeout: 30000 });
-            console.log('Network is idle');
-        } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            console.log('Network did not reach idle state, continuing anyway:', errorMessage);
-        }
 
         // Extract product information
         console.log('Extracting product information...');

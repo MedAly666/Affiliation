@@ -46,15 +46,13 @@ export async function getSuperDeals(browser: Browser): Promise<void> {
 
     try {
         console.log('Navigating to the page...');
-        await withRetry(async () => {
-            await page.goto(SUPERDEALS_URL, { 
-                waitUntil: 'domcontentloaded', 
-                timeout: PAGE_TIMEOUT 
-            });
-            console.log('Page loaded, waiting for network to idle...');
-            await page.waitForNetworkIdle({ timeout: PAGE_TIMEOUT });
-            console.log('Network is idle.');
+        
+        await page.goto(SUPERDEALS_URL, { 
+            waitUntil: 'domcontentloaded', 
+            timeout: PAGE_TIMEOUT 
         });
+        console.log('Page loaded successfully, waiting for content...');
+        
 
         console.log('Starting to extract product data...');
         let productData = await getProducts(page);
@@ -274,16 +272,16 @@ export async function getSuperDealsReviewsAndImages(browser: Browser): Promise<v
         try {
             // Get super deals
             console.log('Starting to fetch super deals...');
-            await getSuperDeals(browser);
+            //await getSuperDeals(browser);
             console.log('Super deals fetched and stored successfully.');
             
             console.log('Starting to fetch reviews for super deals...');
             // Get reviews for super deals
-            await getSuperDealsReviews(browser);
+            getSuperDealsReviews(browser);
             console.log('Reviews fetched and stored successfully.');
 
             console.log('Starting to fetch images for super deals...');
-            await getSuperDealsImages(browser);
+            getSuperDealsImages(browser);
             console.log('Images fetched and stored successfully.');
             
             console.log('All operations completed successfully.');

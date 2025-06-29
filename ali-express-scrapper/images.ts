@@ -47,8 +47,8 @@ async function getImages(browser: Browser, productUrl: string): Promise<Image[]>
         });
 
         console.log('Product page loaded, waiting for content...');
-        await sleep(15000); // Increased sleep time for better reliability
-        
+        await sleep(3000); // Increased sleep time for better reliability
+
         // Wait for the images section to load
         try {
             // Wait for the images to appear
