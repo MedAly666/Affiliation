@@ -16,7 +16,7 @@ export async function launchBrowser(): Promise<Browser> {
             '--disable-gpu',
             '--window-size=1200,800',
             //'--proxy-server=socks5://127.0.0.1:9050'
-            '--proxy-server=socks4://173.212.209.49:48924'
+            //'--proxy-server=socks4://173.212.209.49:48924'
         ]
     };
 
