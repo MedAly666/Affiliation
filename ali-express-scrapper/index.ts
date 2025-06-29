@@ -9,7 +9,7 @@ import getImages from './images';
 import { sleep } from './utils';
 
 // Increased timeout values for better reliability
-const PAGE_TIMEOUT = 50000; // 50 seconds
+const PAGE_TIMEOUT = 5000; // 5 seconds
 const SUPERDEALS_URL = 'https://ar.aliexpress.com/ssr/300000444/GSDWp3p6aC?disableNav=YES&pha_manifest=ssr&_immersiveMode=true&wh_offline=true';
 
 // Helper function to retry operations with exponential backoff
@@ -203,7 +203,6 @@ export async function getSuperDealsImages(browser: Browser): Promise<void> {
                         .from('images')
                         .upsert(images.map(image => ({
                             image_url: image.url,
-                            image_url_hash: image.hash,
                             image_alt: image.alt,
                             product_id: product.product_id,
                         })));
@@ -272,7 +271,7 @@ export async function getSuperDealsReviewsAndImages(browser: Browser): Promise<v
         try {
             // Get super deals
             console.log('Starting to fetch super deals...');
-            //await getSuperDeals(browser);
+            await getSuperDeals(browser);
             console.log('Super deals fetched and stored successfully.');
             
             console.log('Starting to fetch reviews for super deals...');

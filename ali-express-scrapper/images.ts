@@ -5,7 +5,6 @@ import md5 from 'md5';
 export type Image = {
     url: string;
     alt: string;
-    hash: string;
 };
 
 
@@ -65,7 +64,6 @@ async function getImages(browser: Browser, productUrl: string): Promise<Image[]>
         console.log('Extracting image data...');
         const images = (await extractImagesData(page)).map(image => ({
             ...image,
-            hash: md5(image.url) // Calculate MD5 hash of the image URL
         }));
         console.log(`Found ${images.length} images for product: ${productUrl}`);
         if (images.length === 0) {

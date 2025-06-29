@@ -6,16 +6,17 @@ export async function launchBrowser(): Promise<Browser> {
     
     const launchOptions: any = {
         headless: isCI ? true : false, // Use headless mode in CI, non-headless for local development
-        timeout: 100000,
-        defaultViewport: { width: 1024, height: 720 },
+        timeout: 10000,
+        defaultViewport: { width: 1200, height: 800 },
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
             '--disable-accelerated-2d-canvas',
             '--disable-gpu',
-            '--window-size=1024,720',
+            '--window-size=1200,800',
             //'--proxy-server=socks5://127.0.0.1:9050'
+            '--proxy-server=socks4://173.212.209.49:48924'
         ]
     };
 
