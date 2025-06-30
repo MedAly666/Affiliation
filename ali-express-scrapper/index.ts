@@ -227,6 +227,7 @@ export async function getSuperDealsImages(browser: Browser): Promise<void> {
                 }
             } catch (error) {
                 console.error(`Failed to process images for product: ${product.title}`, error);
+                
                 // Continue with the next product
             }
         }

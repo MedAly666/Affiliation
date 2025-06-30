@@ -36,12 +36,10 @@ async function getImages(browser: Browser, productUrl: string): Promise<Image[]>
 
     const page = await browser.newPage();
     try {
-        await page.setDefaultNavigationTimeout(PAGE_TIMEOUT);
-        await page.setDefaultTimeout(PAGE_TIMEOUT);
         
         console.log(`Navigating to product page: ${productUrl}`);
         await page.goto(productUrl, { 
-            waitUntil: 'networkidle2',
+            waitUntil: 'domcontentloaded',
             timeout: PAGE_TIMEOUT
         });
 
