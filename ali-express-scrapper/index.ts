@@ -7,6 +7,7 @@ import getReviews from './reviews';
 import getProducts from './products';
 import getImages from './images';
 import { sleep } from './utils';
+import getAliExpressAffiliateLink from './link-generator';
 
 // Increased timeout values for better reliability
 const PAGE_TIMEOUT = 5000; // 5 seconds
@@ -89,6 +90,8 @@ export async function getSuperDeals(browser: Browser): Promise<void> {
                     console.log(`Updated timestamp for existing product: ${product.title}`);
                 }
             } else {
+
+                product.affiliation_link = await getAliExpressAffiliateLink(product.url) || '';
                 // Product doesn't exist, insert the full record                
                 const { error: insertError } = await supabase
                     .from('products')

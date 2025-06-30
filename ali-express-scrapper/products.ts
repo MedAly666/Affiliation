@@ -16,6 +16,7 @@ export type Product = {
     original_price: number;
     price?: number;
     image: string;
+    affiliation_link?: string;
 };
 
 export async function scrollToBottom(page: Page) {

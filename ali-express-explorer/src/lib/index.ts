@@ -10,6 +10,9 @@ export type Product = {
     created_at: string;
     avg_rating?: number;
     nb_reviews?: number;
+    affiliation_link?: string;
+    reviews?: Review[];
+    images?: Image[];
 };
 
 export type Review = {
