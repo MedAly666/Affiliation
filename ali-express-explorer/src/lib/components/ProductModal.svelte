@@ -92,7 +92,7 @@
                             {/if}
                         </div>
                         <Button
-                            href={product.url}
+                            href={product.affiliation_link || product.url}
                             target="_blank"
                             color="purple"
                             size="sm"

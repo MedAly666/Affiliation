@@ -97,7 +97,7 @@
         </Button>
         <div class="mt-2">
             <Button
-                href={product.url}
+                href={product.affiliation_link || product.url }
                 target="_blank"
                 class="w-full"
                 color="light"
