@@ -12,18 +12,6 @@ export const load: PageLoad = async ({ params }) : Promise<{ products: Product[]
       products = await response.json();
       console.log('Products fetched successfully:', products.length + ' products found');
       
-      for (const product of products) {
-        try {
-            const response = await fetch(`./api/product-reviews?productId=${product.product_id}`);
-            const reviews = await response.json();
-            console.log(`Reviews for product ${product.product_id}:`, reviews);
-            
-            product.nb_reviews = reviews.length;
-            product.avg_rating = reviews.reduce((sum: number, review: Review) => sum + review.rating, 0) / reviews.length || 0;
-        } catch (error) {
-            console.error(`Error fetching reviews for product ${product.product_id}:`, error);
-        }
-      }
     } catch (err) {
         return {
             products: [] as Product[],

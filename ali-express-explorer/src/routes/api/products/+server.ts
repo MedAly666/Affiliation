@@ -6,7 +6,7 @@ import supabase from "$lib/supabase";
 
 export const GET: RequestHandler = async ({ url }) => {
   // Get query parameters
-  const limit = Number(url.searchParams.get('limit') || '20000');
+  const limit = Number(url.searchParams.get('limit') || '100000');
   const page = Number(url.searchParams.get('page') || '1');
   const offset = (page - 1) * limit;
 
@@ -16,12 +16,12 @@ export const GET: RequestHandler = async ({ url }) => {
 
   // Query products from Supabase using the server-side client
   const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .gte('updated_at', fortyEightHoursAgo)
-    .range(offset, offset + limit - 1);
-  
+  .rpc('get_products_with_reviews', {     
+    limit_val: limit,
+    offset_val: offset,
+    updated_at_date: fortyEightHoursAgo
+  });
+
   if (error) {
     console.error('Error fetching products:', error);
     return new Response(JSON.stringify({ error: error.message }), {
