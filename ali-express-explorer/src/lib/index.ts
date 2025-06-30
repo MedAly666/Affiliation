@@ -8,4 +8,16 @@ export type Product = {
     url: string;
     url_hash: string;
     created_at: string;
+    avg_rating?: number;
+    nb_reviews?: number;
+};
+
+export type Review = {
+    rating: number;
+    content: string;
+};
+
+export type Image = {
+    image_url: string;
+    image_alt: string;
 };
