@@ -14,7 +14,7 @@ const PAGE_TIMEOUT = 5000; // 5 seconds
 const SUPERDEALS_URL = 'https://ar.aliexpress.com/ssr/300000444/GSDWp3p6aC?disableNav=YES&pha_manifest=ssr&_immersiveMode=true&wh_offline=true';
 
 // Helper function to retry operations with exponential backoff
-async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3, initialDelay = 5000): Promise<T> {
+async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3, initialDelay = 3000): Promise<T> {
     let retries = 0;
     let delay = initialDelay;
     
@@ -91,7 +91,7 @@ export async function getSuperDeals(browser: Browser): Promise<void> {
                 }
             } else {
 
-                product.affiliation_link = await getAliExpressAffiliateLink(product.url) || '';
+                product.affiliation_link = await getAliExpressAffiliateLink(product.url) || undefined;
                 // Product doesn't exist, insert the full record                
                 const { error: insertError } = await supabase
                     .from('products')
