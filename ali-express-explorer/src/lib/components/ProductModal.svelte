@@ -33,14 +33,35 @@
         ];
         return colors[idx % colors.length];
     }
+
+    // Share functions
+    async function shareToFacebookPage(product_id: number) {
+
+        await fetch('/api/share/facebook', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ product_id }),
+        });
+
+    }
+    async function shareToTelegramChannel(product_id: number) {
+        await fetch('/api/share/telegram', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ product_id }),
+        });
+    }
 </script>
 
 <Modal
     bind:open={show}
-    size="2xl"
     autoclose={false}
     onclose={onClose}
-    class="!p-0"
+    class="!p-0 max-w-7xl mx-auto"
 >
     {#if product}
         <div
@@ -89,14 +110,15 @@
 
                     <!-- Share & Copy Section -->
                     <div class="flex flex-col gap-2 mt-2">
+                        <h4 class="text-lg font-semibold text-gray-800">
+                            Share or Copy Product Link
+                        </h4>
                         <div class="flex flex-wrap gap-3 items-center">
                             <button
                                 class="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-sm shadow"
-                                onclick={() =>
-                                    window.open(
-                                        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(product.affiliation_link || product.url)}`,
-                                        "_blank",
-                                    )}
+                                onclick={async () => await shareToFacebookPage(
+                                    product.product_id,
+                                )}
                                 aria-label="Share on Facebook"
                             >
                                 <svg
@@ -110,11 +132,9 @@
                             </button>
                             <button
                                 class="flex items-center gap-2 px-3 py-2 rounded-lg bg-cyan-500 text-white hover:bg-cyan-600 transition text-sm shadow"
-                                onclick={() =>
-                                    window.open(
-                                        `https://t.me/share/url?url=${encodeURIComponent(product.affiliation_link || product.url)}`,
-                                        "_blank",
-                                    )}
+                                onclick={async () => await shareToTelegramChannel(
+                                    product.product_id,
+                                )}
                                 aria-label="Share on Telegram"
                             >
                                 <svg
