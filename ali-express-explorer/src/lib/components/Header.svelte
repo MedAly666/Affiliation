@@ -51,9 +51,9 @@
 				</Button>
 			</ButtonGroup>
 		{#if !hidden}
-			<ButtonGroup>
+			<ButtonGroup class="w-screen px-2">
 				<Input
-					class="w-96 border focus:outline-none"
+					class="border focus:outline-none"
 					placeholder="Search for products..."
 					bind:value={searchQuery}
 					oninput={(e) =>
@@ -69,7 +69,7 @@
 			</ButtonGroup>
 		{/if}
 		<DarkMode
-			class="text-primary-500 dark:text-primary-600 border dark:bg-gray-700"
+			class="text-primary-500 dark:text-primary-600 border dark:bg-gray-700 m-2"
 		/>
 
 		<!--div class="flex items-center md:order-2">
