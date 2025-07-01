@@ -21,10 +21,7 @@ export const GET: RequestHandler = async ({ url }) => {
   if (error) {
     console.error('Error fetching product images:', error);
     return json({ error: error.message }, { status: 500 });
-  }
-
-  console.log(data);
-  
+  }  
 
   return json(data || []);
 };

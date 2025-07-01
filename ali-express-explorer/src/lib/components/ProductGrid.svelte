@@ -2,15 +2,19 @@
   import ProductCard from './ProductCard.svelte';
   import { Spinner, Button } from 'flowbite-svelte';
   import type { Product } from '$lib/index.js';
-  export let favoriteProducts: string[];
-  export let onToggleFavorite: (urlHash: string) => void;
-  export let onView: (product: Product) => void;
-  export let getDiscountPercentage: (original: number, current: number) => number;
-  export let loadMoreTrigger: HTMLDivElement | null;
-  export let isLoadingMore: boolean;
-  export let visibleItems: Product[];
-  export let loadMoreProducts: () => void;
-  export let filteredProducts: Product[];
+  
+
+  let {
+    favoriteProducts,
+    onToggleFavorite,
+    onView,
+    getDiscountPercentage,
+    loadMoreTrigger,
+    isLoadingMore,
+    visibleItems,
+    loadMoreProducts,
+    filteredProducts
+  } = $props();
 </script>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

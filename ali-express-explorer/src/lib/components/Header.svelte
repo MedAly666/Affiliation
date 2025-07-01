@@ -1,31 +1,58 @@
 <script lang="ts">
-  import { Input } from "flowbite-svelte";
-  import { SearchOutline } from "flowbite-svelte-icons";
-    import { on } from "svelte/events";
-  /*export let searchQuery: string;
-  export let onSearch: (value: string) => void;*/
+	import {
+		Button,
+		Navbar,
+		Input,
+		NavBrand,
+		ButtonGroup,
+		DarkMode,
+	} from "flowbite-svelte";
+	import logo from "$lib/assets/logo.png";
+	import { SearchOutline } from "flowbite-svelte-icons";
+	let { searchQuery, onSearch } = $props();
 
-  let { searchQuery, onSearch } = $props();
-
-  $effect(() => {
-    onSearch(searchQuery);
-  });
-  
+	$effect(() => {
+		onSearch(searchQuery);
+	});
 </script>
 
-<header class="bg-gradient-to-r from-purple-600 to-blue-500 text-white py-8 px-4 shadow-md">
-  <div class="container mx-auto">
-    <h1 class="text-4xl font-bold mb-2 text-center">Deals Hunter</h1>
-    <p class="text-center text-white/80 mb-6">Discover amazing deals updated daily</p>
-    <div class="relative max-w-xl mx-auto">
-      <Input
-        class="pl-10"
-        size="lg"
-        placeholder="Search for products..."
-        bind:value={searchQuery}
-        oninput={(e) => onSearch((e.target && (e.target as HTMLInputElement).value) ?? "")}
-      />
-      <SearchOutline class="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
-    </div>
-  </div>
-</header>
+<Navbar
+	class="fixed start-0 top-0 z-20 bg-primary-100 dark:bg-primary-700 flex"
+>
+	<NavBrand href="/">
+		<img src={logo} class="h-10 sm:h-9 rounded-2xl mr-2" alt="Deals Hunter Logo" />
+		<span
+			class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
+			>Deals Hunter</span
+		>
+	</NavBrand>
+	<ButtonGroup>
+		<Input
+			class="w-96 border focus:outline-none"
+			placeholder="Search for products..."
+			bind:value={searchQuery}
+			oninput={(e) =>
+				onSearch(
+					(e.target && (e.target as HTMLInputElement).value) ?? "",
+				)}
+		/>
+		<Button>
+			<SearchOutline />
+		</Button>
+	</ButtonGroup>
+	<DarkMode class="text-primary-500 dark:text-primary-600 border dark:bg-gray-700" />
+
+	<!--div class="flex items-center md:order-2">
+		<Avatar id="avatar-menu" src="/images/profile-picture-3.webp" />
+		<NavHamburger />
+	</div>
+	<Dropdown placement="bottom" triggeredBy="#avatar-menu">
+		<DropdownHeader>
+			<span class="block text-sm">Bonnie Green</span>
+			<span class="block truncate text-sm font-medium"
+				>name@Deals Hunter.com</span
+			>
+		</DropdownHeader>
+		<DropdownHeader>Sign out</DropdownHeader>
+	</Dropdown-->
+</Navbar>

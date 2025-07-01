@@ -1,18 +1,19 @@
 <script lang="ts">
   import Header from '$lib/components/Header.svelte';
-  import Filters from '$lib/components/Filters.svelte';
+  import FiltersPanel from '$lib/components/FiltersPanel.svelte';
   import ProductGrid from '$lib/components/ProductGrid.svelte';
   import ProductModal from '$lib/components/ProductModal.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import { onMount } from 'svelte';
-  import type { PageProps } from "./$types";
+  import type { PageLoad } from "./$types";
   import type { Product } from '$lib/index.js';
+    import { Card } from 'flowbite-svelte';
 
-  let { data }: PageProps = $props();
+  let { data }: PageLoad = $props();
+
   let products: Product[] = data.products || [];
   let error: string | null = data.error || null;
-
-  let loading = false;
+  let loading: boolean = data.loading || false;
 
   // Calculate discount percentage
   const getDiscountPercentage = (
@@ -178,10 +179,10 @@
 
 <Header {searchQuery} onSearch={(v: string) => searchQuery = v} />
 
-<main class="container mx-auto px-4 py-8">
+<main class="container mx-auto px-4 py-8 mt-15">
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
     <div class="lg:col-span-1">
-      <Filters
+      <FiltersPanel
         {minPrice}
         {maxPrice}
         {sortOption}
@@ -193,7 +194,7 @@
     </div>
     <div class="lg:col-span-3">
       {#if loading}
-        <div class="flex justify-center items-center h-64">
+        <div class="flex justify-center items-center h-64 text-gray-900 dark:text-white">
           <span>Loading products...</span>
         </div>
       {:else if error}
@@ -202,11 +203,11 @@
           <p>Please try refreshing the page.</p>
         </div>
       {:else if filteredProducts.length === 0}
-        <div class="text-center py-12 bg-gray-50 rounded-lg">
-          <img src="/empty-state.svg" alt="No products found" class="w-32 h-32 mx-auto mb-4 opacity-50" />
+        <Card class="text-center py-12 w-full text-gray-900 dark:text-white">
+          <!--img src="/empty-state.svg" alt="No products found" class="w-32 h-32 mx-auto mb-4 opacity-50" /-->
           <p class="text-xl mb-2">No products found</p>
           <p class="text-gray-500">Try adjusting your search or filters</p>
-        </div>
+        </Card>
       {:else}
         <ProductGrid
           {visibleItems}
@@ -235,7 +236,7 @@
 
 <Footer />
 
-<style>
+<!--style>
   /* Modal and carousel styles */
   :global(.carousel-container) {
     height: 100%;
@@ -274,4 +275,4 @@
     opacity: 1;
     background-color: rgba(255, 255, 255, 0.8);
   }
-</style>
+</style-->
