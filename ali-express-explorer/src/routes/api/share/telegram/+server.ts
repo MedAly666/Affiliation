@@ -50,8 +50,11 @@ ${product.affiliation_link}
     console.log('Launching Telegram bot...');
     const bot = launchTelegramBot();
 
-    bot.telegram.sendPhoto(TELEGRAM_CHANNEL_ID, product.image, {
-        caption: message        
+    bot.telegram.sendPhoto(TELEGRAM_CHANNEL_ID, product.image.replace(
+        "_220x220",
+        "_960x960",
+    ), {
+        caption: message
     })
         .then(() => {
             console.log('Product shared successfully to Telegram channel');

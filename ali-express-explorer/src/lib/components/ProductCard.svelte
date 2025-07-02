@@ -35,11 +35,11 @@
 </script>
 
 <Card
-    class="h-full flex flex-col hover:shadow-lg transition-shadow overflow-hidden group "
+    class="h-full flex flex-col hover:shadow-lg transition-shadow overflow-hidden group"
 >
     <div class="relative overflow-hidden">
         <img
-            src={product.image}
+            src={product.image.replace("_220x220", "_960x960")}
             alt={product.title}
             class="w-full h-48 object-cover p-2 group-hover:scale-105 transition-transform"
         />
@@ -104,15 +104,15 @@
     </div>
     <div class="flex gap-2 p-2 pt-0">
         <Button class="flex-2" color="blue" onclick={() => onView(product)}>
-            <EyeOutline class="mr-2 h-5 w-5" />View Product
+            <EyeOutline class="h-5 w-5" />View Product
         </Button>
         <Button
             href={product.affiliation_link || product.url}
             target="_blank"
             class="flex-1"
-            size="sm"
+            size="md"
         >
-            <CartOutline class="h-4 w-4" />
+            <CartOutline size="lg" class="h-4 w-4" />
         </Button>
     </div>
 </Card>

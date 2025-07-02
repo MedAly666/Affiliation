@@ -15,26 +15,26 @@
         Listgroup,
         ListgroupItem,
         Avatar,
+        Toast,
     } from "flowbite-svelte";
     import {
         FacebookSolid,
-        PaperPlaneSolid,
         ShoppingBagOutline,
         StarSolid,
         ClipboardCleanSolid,
         CheckOutline,
         PaperPlaneOutline,
+        CheckCircleSolid,
     } from "flowbite-svelte-icons";
-    import type { Product } from "$lib/index.js";
-    export let show: boolean;
-    export let product: Product | null;
-    export let images: { image_url: string; image_alt: string }[];
-    export let reviews: { rating: number; content: string }[];
-    export let onClose: () => void;
-    export let getDiscountPercentage: (
-        original: number,
-        current: number,
-    ) => number;
+    import { slide } from "svelte/transition";
+
+    import type { Product, Image } from "$lib/index.js";
+
+    let { show, product, images, reviews, onClose, getDiscountPercentage } =
+        $props();
+
+    let toastStatus: boolean = $state(false);
+    let toastMessage: string = $state("Successfully shared");
 
     // Helper for random avatar color
     function getAvatarColor(idx: number) {
@@ -51,22 +51,68 @@
 
     // Share functions
     async function shareToFacebookPage(product_id: number) {
-        await fetch("/api/share/facebook", {
+        let res = await fetch("/api/share/facebook", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ product_id }),
         });
+
+        if (!res.ok) {
+            console.error("Failed to share on Facebook:", res.statusText);
+            return;
+        }
+        const data = await res.json();
+        if (data.error) {
+            console.error("Error sharing on Facebook:", data.error);
+            return;
+        }
+
+        const success = data.success;
+        if (success) {
+            toastStatus = true;
+            toastMessage = "The product is successfully shared on Facebook";
+            setTimeout(() => {
+                toastStatus = false;
+            }, 3000);
+            console.log("Successfully shared on Facebook");
+        } else {
+            console.error("Failed to share on Facebook");
+            return;
+        }
     }
     async function shareToTelegramChannel(product_id: number) {
-        await fetch("/api/share/telegram", {
+        let res = await fetch("/api/share/telegram", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ product_id }),
         });
+
+        if (!res.ok) {
+            console.error("Failed to share on Telegram:", res.statusText);
+            return;
+        }
+
+        const data = await res.json();
+        if (data.error) {
+            console.error("Error sharing on Telegram:", data.error);
+            return;
+        }
+        const success = data.success;
+        if (success) {
+            toastMessage = "The product is successfully shared on Telegram";
+            toastStatus = true;
+            setTimeout(() => {
+                toastStatus = false;
+            }, 3000);
+            console.log("Successfully shared on Telegram");
+        } else {
+            console.error("Failed to share on Telegram");
+            return;
+        }
     }
 </script>
 
@@ -74,8 +120,20 @@
     bind:open={show}
     autoclose={false}
     onclose={onClose}
+    transition={slide}
     class="!p-0 max-w-7xl mx-auto"
 >
+    <Toast
+        transition={slide}
+        align={false}
+        bind:toastStatus
+        class="fixed top-2 left-1/2 -translate-x-1/2 z-50"
+    >
+        {#snippet icon()}
+            <CheckCircleSolid class="h-5 w-5" />
+        {/snippet}
+        <p class="ml-3">{toastMessage}</p>
+    </Toast>
     {#if product}
         <div class="relative rounded-2xl overflow-hidden">
             <div class="flex flex-col lg:flex-row gap-0 lg:gap-8">
@@ -87,10 +145,10 @@
                         <Carousel
                             class="rounded-xl h-[320px] md:h-[420px] shadow-lg"
                             imgClass="object-cover h-full w-full rounded-xl"
-                            images={images.map((img) => ({
+                            images={images.map((img: Image) => ({
                                 src: img.image_url.replace(
-                                    "jpg_220x220q75.jpg",
-                                    "jpg_960x960q75.jpg",
+                                    "_220x220",
+                                    "_960x960",
                                 ),
                                 alt: img.image_alt || product?.title,
                             }))}
@@ -100,11 +158,8 @@
                             {#if images.length > 1}
                                 <Thumbnails
                                     index={0}
-                                    images={images.map((img) => ({
-                                        src: img.image_url.replace(
-                                            "jpg_960x960q75.jpg",
-                                            "jpg_220x220q75.jpg",
-                                        ),
+                                    images={images.map((img: Image) => ({
+                                        src: img.image_url,
                                         alt: img.image_alt || product?.title,
                                     }))}
                                 />
@@ -176,9 +231,7 @@
                     <!-- closes share/copy section -->
                 </div>
                 <!-- Product Info & Reviews -->
-                <div
-                    class="flex-1 flex flex-col align-center p-2"
-                >
+                <div class="flex-1 flex flex-col align-center p-2">
                     <!-- Product Info -->
                     <div class="flex flex-col">
                         <h3
