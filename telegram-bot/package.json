@@ -10,6 +10,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "telegraf": "^4.16.3"
+    "axios": "^1.10.0",
+    "telegram": "^2.26.22"
   }
 }
