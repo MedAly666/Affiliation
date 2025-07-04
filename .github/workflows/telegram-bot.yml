@@ -5,11 +5,14 @@ on:
     - cron: '0 0,6,12,18 * * *'
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
+    concurrency:
+      group: telegram-bot-forwarder
+      cancel-in-progress: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
