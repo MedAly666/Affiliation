@@ -23,7 +23,7 @@ jobs:
         run: bun install
         working-directory: ./telegram-bot
 
-      - name: Run the Telegram bot (keep alive)
+      - name: Run the Telegram bot
         env:
           TELEGRAM_SRC_CHANNEL_ID: ${{ secrets.TELEGRAM_SRC_CHANNEL_ID }}
           TELEGRAM_DEST_CHANNEL_ID: ${{ secrets.TELEGRAM_DEST_CHANNEL_ID }}
