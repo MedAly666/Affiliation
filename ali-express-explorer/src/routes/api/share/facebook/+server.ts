@@ -36,7 +36,7 @@ export const POST: RequestHandler = async ({ request }) => {
     const message = `
     🟢 ${product.title} 🟢
 🔥🔥تخفيض كبير 💲💲💲💲
-سعر : ${product.price}€
+سعر : ${product.sale_price}€
 السعر الاصلي : ${product.original_price}€
 
 ${product.affiliation_link}

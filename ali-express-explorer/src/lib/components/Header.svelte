@@ -8,25 +8,17 @@
 		DarkMode,
 		NavHamburger,
 	} from "flowbite-svelte";
-	import { fade } from "svelte/transition";
 	import logo from "$lib/assets/logo.png";
-	import { SearchOutline } from "flowbite-svelte-icons";
-	let { searchQuery, onSearch } = $props();
 
-	$effect(() => {
-		onSearch(searchQuery);
-	});
 </script>
 
 <Navbar
-	class="fixed start-0 top-0 z-20 bg-primary-100 dark:bg-primary-700 flex"
+	class="w-full fixed start-0 top-0 z-20 bg-primary-100 dark:bg-primary-700 flex p-0 px-2"
 >
-	{#snippet children({ hidden, toggle, NavContainer })}
-		<NavHamburger class="dark:text-white" />
 		<NavBrand href="/">
 			<img
 				src={logo}
-				class="h-10 sm:h-9 rounded-2xl mr-2"
+				class="h-10 rounded-full mr-2"
 				alt="Deals Hunter Logo"
 			/>
 			<span
@@ -34,40 +26,7 @@
 				>Deals Hunter</span
 			>
 		</NavBrand>
-		<ButtonGroup class="hidden md:flex">
-				<Input
-					class="w-96 border focus:outline-none"
-					placeholder="Search for products..."
-					bind:value={searchQuery}
-					oninput={(e) =>
-						onSearch(
-							(e.target &&
-								(e.target as HTMLInputElement).value) ??
-								"",
-						)}
-				/>
-				<Button>
-					<SearchOutline />
-				</Button>
-			</ButtonGroup>
-		{#if !hidden}
-			<ButtonGroup class="w-screen px-2">
-				<Input
-					class="border focus:outline-none"
-					placeholder="Search for products..."
-					bind:value={searchQuery}
-					oninput={(e) =>
-						onSearch(
-							(e.target &&
-								(e.target as HTMLInputElement).value) ??
-								"",
-						)}
-				/>
-				<Button>
-					<SearchOutline />
-				</Button>
-			</ButtonGroup>
-		{/if}
+		
 		<DarkMode
 			class="text-primary-500 dark:text-primary-600 border dark:bg-gray-700 m-2"
 		/>
@@ -85,5 +44,4 @@
 		</DropdownHeader>
 		<DropdownHeader>Sign out</DropdownHeader>
 	</Dropdown-->
-	{/snippet}
 </Navbar>

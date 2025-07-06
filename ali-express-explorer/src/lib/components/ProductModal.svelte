@@ -28,10 +28,9 @@
     } from "flowbite-svelte-icons";
     import { slide } from "svelte/transition";
 
-    import type { Product, Image } from "$lib/index.js";
+	import type { Product } from "$lib/types";
 
-    let { show, product, images, reviews, onClose, getDiscountPercentage } =
-        $props();
+    let { show, product, onClose } = $props();
 
     let toastStatus: boolean = $state(false);
     let toastMessage: string = $state("Successfully shared");
@@ -127,7 +126,7 @@
         transition={slide}
         align={false}
         bind:toastStatus
-        class="fixed top-2 left-1/2 -translate-x-1/2 z-50"
+        class="fixed top-2 left-1/2 -translate-x-1/2 z-20"
     >
         {#snippet icon()}
             <CheckCircleSolid class="h-5 w-5" />
@@ -141,27 +140,26 @@
                 <div
                     class="lg:sticky lg:top-0 flex-1 min-w-[320px] p-6 flex flex-col justify-center"
                 >
-                    {#if images.length > 0}
+                    {#if product.images.length > 0}
                         <Carousel
                             class="rounded-xl h-[320px] md:h-[420px] shadow-lg"
                             imgClass="object-cover h-full w-full rounded-xl"
-                            images={images.map((img: Image) => ({
-                                src: img.image_url.replace(
-                                    "_220x220",
-                                    "_960x960",
-                                ),
-                                alt: img.image_alt || product?.title,
+                            images={product.images.map((img: string) => ({
+                                src: img,
+                                alt: "",
                             }))}
                             duration={0}
                         >
                             <Controls />
-                            {#if images.length > 1}
+                            {#if product.images.length > 1}
                                 <Thumbnails
                                     index={0}
-                                    images={images.map((img: Image) => ({
-                                        src: img.image_url,
-                                        alt: img.image_alt || product?.title,
-                                    }))}
+                                    images={product.images.map(
+                                        (img: string) => ({
+                                            src: img,
+                                            alt: "",
+                                        }),
+                                    )}
                                 />
                             {/if}
                         </Carousel>
@@ -244,19 +242,16 @@
                             <span
                                 class="text-xl font-bold text-gray-900 dark:text-white"
                             >
-                                €{product.price.toFixed(2)}
+                                €{product.sale_price.toFixed(2)}
                             </span>
-                            {#if product.original_price > product.price}
+                            {#if product.original_price > product.sale_price}
                                 <span
                                     class="text-lg line-through text-gray-500"
                                 >
                                     €{product.original_price.toFixed(2)}
                                 </span>
                                 <Badge class="ml-1">
-                                    -{getDiscountPercentage(
-                                        product.original_price,
-                                        product.price,
-                                    )}%
+                                    -{product.discount_percentage}%
                                 </Badge>
                             {/if}
                             <Button
@@ -270,59 +265,6 @@
                         </div>
                     </div>
                     <!-- closes product info -->
-                    <!-- Reviews -->
-                    <div class="mt-4 rounded-xl p-2">
-                        <h4
-                            class="font-bold text-xl mb-4 text-gray-900 dark:text-white flex items-center gap-2"
-                        >
-                            <StarSolid />
-                            Customer Reviews
-                        </h4>
-                        {#if reviews.length === 0}
-                            <div class="py-8 text-center text-gray-400">
-                                <p>
-                                    No reviews available for this product yet.
-                                </p>
-                            </div>
-                        {:else}
-                            <Listgroup
-                                class="max-h-[300px] overflow-y-auto custom-scrollbar"
-                            >
-                                {#each reviews as review, idx}
-                                    <ListgroupItem class="flex justify-end">
-                                        <div class="">
-                                            <div
-                                                class="flex justify-end items-center mb-1 gap-2"
-                                            >
-                                                <Rating
-                                                    id={`review-rating-${idx}`}
-                                                    total={5}
-                                                    rating={review.rating}
-                                                    size={18}
-                                                />
-                                                <span
-                                                    class="text-sm font-medium text-gray-600"
-                                                    >{review.rating}/5</span
-                                                >
-                                            </div>
-                                            <p
-                                                class="text-gray-900 dark:text-white text-base"
-                                            >
-                                                {review.content}
-                                            </p>
-                                        </div>
-                                        <Avatar
-                                            class={`text-white ${getAvatarColor(idx)}`}
-                                        >
-                                            {review.content
-                                                .charAt(0)
-                                                .toUpperCase()}
-                                        </Avatar>
-                                    </ListgroupItem>
-                                {/each}
-                            </Listgroup>
-                        {/if}
-                    </div>
                 </div>
             </div>
         </div>
@@ -333,43 +275,3 @@
         </div>
     {/if}
 </Modal>
-<div class="space-y-5 max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
-    {#each reviews as review, idx}
-        <div class="flex gap-3 items-start border-b pb-4 last:border-b-0">
-            <div
-                class={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg ${getAvatarColor(idx)}`}
-            >
-                {review.content.charAt(0).toUpperCase()}
-            </div>
-            <div class="flex-1">
-                <div class="flex items-center mb-1 gap-2">
-                    <Rating
-                        id={`review-rating-${idx}`}
-                        total={5}
-                        rating={review.rating}
-                        size={18}
-                    />
-                    <span class="text-sm font-medium text-gray-600"
-                        >{review.rating}/5</span
-                    >
-                </div>
-                <p class="text-gray-700 text-base">
-                    {review.content}
-                </p>
-            </div>
-        </div>
-    {/each}
-</div>
-
-<style>
-    /* Custom scrollbar for reviews */
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 8px;
-        background: #ede9fe;
-        border-radius: 8px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #a78bfa;
-        border-radius: 8px;
-    }
-</style>

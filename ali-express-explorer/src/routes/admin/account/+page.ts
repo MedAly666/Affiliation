@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import type { Product, Review } from '$lib/index';
+import type { Product } from "$lib/types";
 
 export const load: PageLoad = async ({ params }): Promise<{ products: Product[]; error: string | null; loading: boolean }> => {
     let products: Product[] = [];
@@ -22,6 +22,8 @@ export const load: PageLoad = async ({ params }): Promise<{ products: Product[];
     }
 
     console.log('Products loaded: ', products.length + ' products found');
+    console.log(products);
+
 
     return {
         products: products as Product[] || [],

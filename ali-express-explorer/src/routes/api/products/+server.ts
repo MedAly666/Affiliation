@@ -1,35 +1,58 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import aliexpress from '$lib/aliexpress';
+import type { Product } from "$lib/types";
 
-// Import the server-side Supabase client
-import supabase from "$lib/supabase";
 
 export const GET: RequestHandler = async ({ url }) => {
-  // Get query parameters
-  const limit = Number(url.searchParams.get('limit') || '100000');
-  const page = Number(url.searchParams.get('page') || '1');
-  const offset = (page - 1) * limit;
+	// Get query parameters
+	const limit = url.searchParams.get('limit') || '25';
+	const page = url.searchParams.get('page') || '1';
+	const searchQuery = url.searchParams.get('q')
 
-  // Calculate the time 48 hours ago
-  // This will be used to filter products created in the last 48 hours
-  const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+	let advancedParams: Record<string, string | undefined> = {};
 
-  // Query products from Supabase using the server-side client
-  const { data, error } = await supabase
-  .rpc('get_products_with_reviews', {     
-    limit_val: limit,
-    offset_val: offset,
-    updated_at_date: fortyEightHoursAgo
-  });
+	if (url.searchParams.get('maxPrice') != '') advancedParams.max_sale_price = url.searchParams.get('maxPrice') + '00' || undefined;
+	if (url.searchParams.get('minPrice') != '') advancedParams.min_sale_price = url.searchParams.get('minPrice') + '00' || undefined;
+	if (url.searchParams.get('sortByType') != '') advancedParams.sort = url.searchParams.get('sortByType') || undefined;
 
-  if (error) {
-    console.error('Error fetching products:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-  
 
-  return json(data);
+	console.log(advancedParams);
+
+	let data = await aliexpress.getProducts({
+		page_no: page,
+		page_size: limit,
+		keywords: searchQuery,
+		target_currency: 'EUR',
+		target_language: 'AR',
+		ship_to_country: 'DZ',
+		...advancedParams
+	});
+
+	if (!data) {
+		console.error('Failed to fetch data from AliExpress API', data);
+		return json({ error: 'Failed to fetch data from API' }, { status: 500 });
+	}
+
+	let products = data.aliexpress_affiliate_product_query_response.resp_result.result.products.product;
+
+	//console.log(products);
+
+	products = products.map((product: any): Product => {
+		return {
+			title: product.product_title,
+			url: product.product_detail_url,
+			image: product.product_main_image_url,
+			sale_price: Number(product.target_sale_price) || 0,
+			original_price: Number(product.target_original_price) || 0,
+			discount_percentage: Math.round(
+				((Number(product.target_original_price) || 0) - (Number(product.target_sale_price) || 0)) /
+				(Number(product.target_original_price) || 1) * 100
+			),
+
+			images: product.product_small_image_urls.string
+		};
+	});
+
+	return json(products);
 };

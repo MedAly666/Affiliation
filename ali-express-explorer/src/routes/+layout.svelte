@@ -1,4 +1,6 @@
 <script lang="ts">
+    import Footer from "$lib/components/Footer.svelte";
+    import Header from "$lib/components/Header.svelte";
 	import "../app.css";
 
 	let { children } = $props();
@@ -11,6 +13,8 @@
 		content="Discover the best deals from AliExpress"
 	/>
 </svelte:head>
-<main>
+<Header />
+<main class="w-screen">
 	{@render children()}
 </main>
+<Footer />
