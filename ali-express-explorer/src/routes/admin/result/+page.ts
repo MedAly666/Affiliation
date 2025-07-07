@@ -4,15 +4,15 @@ import type { PageLoad } from './$types';
 export const load: PageLoad = async ({ url, fetch }) => {
     const params = {
         page: 1,
-        limit: 25,
+        page_size: 25,
         q: url.searchParams.get('q'),
-        minPrice: url.searchParams.get('minPrice') ?? '',
-        maxPrice: url.searchParams.get('maxPrice') ?? '',
+        min_sale_price: url.searchParams.get('min_sale_price') ?? '',
+        max_sale_price: url.searchParams.get('max_sale_price') ?? '',
         sortByType: url.searchParams.get('sortByType') ?? ''
     };
 
     let isAdvancedSearch = false;
-    if (params.maxPrice || params.minPrice || params.sortByType) isAdvancedSearch = true
+    if (params.max_sale_price || params.min_sale_price || params.sortByType) isAdvancedSearch = true
 
     const queryString = new URLSearchParams(params).toString();
     const res = await fetch(`/api/products?${queryString}`);
@@ -22,7 +22,7 @@ export const load: PageLoad = async ({ url, fetch }) => {
 
     return {
         products,
-        searchQuery: params.q,
+        keywords: params.q,
         isAdvancedSearch,
         ...params
     };

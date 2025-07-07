@@ -6,17 +6,6 @@
     let loadMoreTrigger: HTMLDivElement | null = $state(null);
     let isLoadingMore = $state(false);
 
-    // Function to load more products
-    /*async function loadMoreProducts() {
-        if (isLoadingMore || !loadMoreTrigger) return;
-
-        isLoadingMore = true;
-        // Simulate loading delay
-        setTimeout(() => {
-            isLoadingMore = false;
-        }, 500);
-    }*/
-
     $effect(() => {
         if (!loadMoreTrigger) return;
 
@@ -53,8 +42,8 @@
 >
     {#if isLoadingMore}
         <Spinner size="8" />
-        <span class="ml-3 text-gray-900 dark:text-white"
-            >Loading more products...</span
-        >
+        <span class="mx-3 text-gray-900 dark:text-white">
+            جاري تحميل المزيد من المنتجات...
+        </span>
     {/if}
 </div>

@@ -2,23 +2,18 @@
     import { ButtonGroup, Input, Button, Toggle, Card } from "flowbite-svelte";
     import { SearchOutline } from "flowbite-svelte-icons";
 
-    import { goto } from "$app/navigation";
-
-    let { searchQuery = $bindable()} = $props();
-
-
-    
+    let { keywords = $bindable() } = $props();
 </script>
 
-<ButtonGroup class="mx-2 max-w-full w-sm md:w-xl ">
+<ButtonGroup class="mx-2 max-w-full w-sm md:w-xl">
     <Input
         class="border focus:outline-none"
-        placeholder="Search for products..."
-        name="searchQuery"
-        bind:value={searchQuery}
+        placeholder="ابحث عن المنتجات..."
+        name="keywords"
+        bind:value={keywords}
     />
 
-    <Button type="submit">
+    <Button type="submit" title="بحث">
         <SearchOutline />
     </Button>
 </ButtonGroup>

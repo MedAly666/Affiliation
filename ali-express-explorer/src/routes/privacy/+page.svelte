@@ -47,7 +47,7 @@ import { Card, Alert } from "flowbite-svelte";
     </h2>
     <p class="mb-4 text-gray-700 dark:text-gray-300">
       We use industry-standard security measures to protect your data. Access to
-      your information is limited to authorized personnel only.
+      your information is page_sizeed to authorized personnel only.
     </p>
     <h2 class="text-xl font-semibold mt-8 mb-2 text-primary-500 dark:text-primary-100">Third-Party Services</h2>
     <p class="mb-4 text-gray-700 dark:text-gray-300">

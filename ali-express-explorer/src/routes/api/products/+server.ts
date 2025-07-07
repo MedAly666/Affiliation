@@ -1,58 +1,85 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import aliexpress from '$lib/aliexpress';
-import type { Product } from "$lib/types";
-
+import type { Product } from '$lib/types';
 
 export const GET: RequestHandler = async ({ url }) => {
-	// Get query parameters
-	const limit = url.searchParams.get('limit') || '25';
-	const page = url.searchParams.get('page') || '1';
-	const searchQuery = url.searchParams.get('q')
+	const page_size = url.searchParams.get('page_size') || '25';
+	const page_no = url.searchParams.get('page_no') || '1';
+	const keywords = url.searchParams.get('keywords') ?? undefined;
 
 	let advancedParams: Record<string, string | undefined> = {};
 
-	if (url.searchParams.get('maxPrice') != '') advancedParams.max_sale_price = url.searchParams.get('maxPrice') + '00' || undefined;
-	if (url.searchParams.get('minPrice') != '') advancedParams.min_sale_price = url.searchParams.get('minPrice') + '00' || undefined;
-	if (url.searchParams.get('sortByType') != '') advancedParams.sort = url.searchParams.get('sortByType') || undefined;
+	const max_sale_price = url.searchParams.get('max_sale_price');
+	const min_sale_price = url.searchParams.get('min_sale_price');
+	const sortByType = url.searchParams.get('sortByType');
+
+	const max = Number(max_sale_price);
+	if (!isNaN(max) && max > 0) advancedParams.max_sale_price = String(max * 100);
+
+	const min = Number(min_sale_price);
+	if (!isNaN(min) && min > 0) advancedParams.min_sale_price = String(min * 100);
+
+	if (sortByType) advancedParams.sort = sortByType;
 
 
-	console.log(advancedParams);
+	let data;
+	try {
 
-	let data = await aliexpress.getProducts({
-		page_no: page,
-		page_size: limit,
-		keywords: searchQuery,
-		target_currency: 'EUR',
-		target_language: 'AR',
-		ship_to_country: 'DZ',
-		...advancedParams
-	});
+		let parameters = {
+			page_no: page_no,
+			page_size: page_size,
+			keywords: keywords,
+			target_currency: 'EUR',
+			target_language: 'AR',
+			ship_to_country: 'DZ',
+			...advancedParams
+		}
 
-	if (!data) {
-		console.error('Failed to fetch data from AliExpress API', data);
+		//console.log('cold data : ', parameters);
+
+
+		data = await aliexpress.getProducts(parameters);
+
+	} catch (err) {
+		console.error('AliExpress API call failed:', err);
 		return json({ error: 'Failed to fetch data from API' }, { status: 500 });
 	}
 
-	let products = data.aliexpress_affiliate_product_query_response.resp_result.result.products.product;
+	let products = data?.aliexpress_affiliate_product_query_response?.resp_result?.result?.products?.product;
 
-	//console.log(products);
+	if (!products) {
+		return json({ error: 'No products found' }, { status: 404 });
+	}
 
-	products = products.map((product: any): Product => {
-		return {
-			title: product.product_title,
-			url: product.product_detail_url,
-			image: product.product_main_image_url,
-			sale_price: Number(product.target_sale_price) || 0,
-			original_price: Number(product.target_original_price) || 0,
-			discount_percentage: Math.round(
-				((Number(product.target_original_price) || 0) - (Number(product.target_sale_price) || 0)) /
-				(Number(product.target_original_price) || 1) * 100
-			),
+	const formattedProducts: Product[] = await Promise.all(
+		products.map(async (product: any): Promise<Product | undefined> => {
+			const originalPrice = Number(product.target_original_price) || 0;
+			const salePrice = Number(product.target_sale_price) || 0; 7
 
-			images: product.product_small_image_urls.string
-		};
-	});
+			const affiliate = await aliexpress.getAffiliateLink(product.product_detail_url);  
+            let affiliate_link = affiliate.aliexpress_affiliate_link_generate_response?.resp_result.result.promotion_links.promotion_link[0].promotion_link;
 
-	return json(products);
+			if (!affiliate_link) {
+				console.error('Cant find an affiliate link');
+				return;
+			}
+			
+			return {
+				title: product.product_title,
+				image: product.product_main_image_url,
+				sale_price: salePrice,
+				original_price: originalPrice,
+				discount_percentage: Math.round(
+					((originalPrice - salePrice) / (originalPrice || 1)) * 100
+				),
+				images: product.product_small_image_urls?.string ?? [],
+				affiliate_link: affiliate_link,
+			};
+		})
+	);
+
+	let cleandProducts = formattedProducts.filter(Boolean);
+
+	return json(cleandProducts);
 };

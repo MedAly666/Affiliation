@@ -12,21 +12,21 @@
     let { data }: PageProps = $props();
 
     let products = $state(data.products);
-    let searchQuery = $state(data.q);
+    let keywords = $state(data.q);
 
     let openFilterPanal = $state(data.isAdvancedSearch)
-    let minPrice = $state(data.minPrice);
-    let maxPrice = $state(data.maxPrice);
-    let sortbyValue = $state(data.sortByType);
-    let pageNumber = $state(1);
+    let min_sale_price = $state(data.min_sale_price);
+    let max_sale_price = $state(data.max_sale_price);
+    let sort = $state(data.sortByType);
+    let page_no = $state(1);
 
     /*async function loadProducts(params: {
-        limit: number;
+        page_size: number;
         page: number;
     }): Promise<Product[]> {
         console.log("Loading products with params:", params);
         const response = await fetch(
-            `/api/products?limit=${params.limit}&page=${params.page}`,
+            `/api/products?page_size=${params.page_size}&page=${params.page}`,
         );
 
         if (!response.ok) {
@@ -53,8 +53,8 @@
         action="?/search"
         method="POST"
     >
-        <Search {searchQuery} />
-        <FiltersPanel {openFilterPanal} {maxPrice} {minPrice} {sortbyValue} />
+        <Search {keywords} />
+        <FiltersPanel {openFilterPanal} {max_sale_price} {min_sale_price} {sort} />
     </form>
 
     <article class=" h-screen overflow-y-scroll p-2">

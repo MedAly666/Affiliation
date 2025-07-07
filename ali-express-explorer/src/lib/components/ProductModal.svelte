@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { Product } from "$lib/types";
     import {
         Modal,
         Carousel,
@@ -28,27 +29,16 @@
     } from "flowbite-svelte-icons";
     import { slide } from "svelte/transition";
 
-	import type { Product } from "$lib/types";
-
-    let { show, product, onClose } = $props();
+    let {
+        show,
+        product,
+        onClose,
+    }: { show: boolean; product: Product; onClose: any } = $props();
 
     let toastStatus: boolean = $state(false);
-    let toastMessage: string = $state("Successfully shared");
+    let toastMessage: string = $state("تمت المشاركة بنجاح");
+    let carouselIndex = $state(0);
 
-    // Helper for random avatar color
-    function getAvatarColor(idx: number) {
-        const colors = [
-            "bg-blue-500",
-            "bg-pink-500",
-            "bg-blue-500",
-            "bg-green-500",
-            "bg-yellow-500",
-            "bg-red-500",
-        ];
-        return colors[idx % colors.length];
-    }
-
-    // Share functions
     async function shareToFacebookPage(product_id: number) {
         let res = await fetch("/api/share/facebook", {
             method: "POST",
@@ -58,29 +48,16 @@
             body: JSON.stringify({ product_id }),
         });
 
-        if (!res.ok) {
-            console.error("Failed to share on Facebook:", res.statusText);
-            return;
-        }
         const data = await res.json();
-        if (data.error) {
-            console.error("Error sharing on Facebook:", data.error);
-            return;
-        }
-
-        const success = data.success;
-        if (success) {
+        if (data.success) {
             toastStatus = true;
-            toastMessage = "The product is successfully shared on Facebook";
+            toastMessage = "تمت مشاركة المنتج بنجاح على فيسبوك";
             setTimeout(() => {
                 toastStatus = false;
             }, 3000);
-            console.log("Successfully shared on Facebook");
-        } else {
-            console.error("Failed to share on Facebook");
-            return;
         }
     }
+
     async function shareToTelegramChannel(product_id: number) {
         let res = await fetch("/api/share/telegram", {
             method: "POST",
@@ -90,27 +67,13 @@
             body: JSON.stringify({ product_id }),
         });
 
-        if (!res.ok) {
-            console.error("Failed to share on Telegram:", res.statusText);
-            return;
-        }
-
         const data = await res.json();
-        if (data.error) {
-            console.error("Error sharing on Telegram:", data.error);
-            return;
-        }
-        const success = data.success;
-        if (success) {
-            toastMessage = "The product is successfully shared on Telegram";
+        if (data.success) {
+            toastMessage = "تمت مشاركة المنتج بنجاح على تيليجرام";
             toastStatus = true;
             setTimeout(() => {
                 toastStatus = false;
             }, 3000);
-            console.log("Successfully shared on Telegram");
-        } else {
-            console.error("Failed to share on Telegram");
-            return;
         }
     }
 </script>
@@ -136,14 +99,13 @@
     {#if product}
         <div class="relative rounded-2xl overflow-hidden">
             <div class="flex flex-col lg:flex-row gap-0 lg:gap-8">
-                <!-- Image Carousel -->
                 <div
                     class="lg:sticky lg:top-0 flex-1 min-w-[320px] p-6 flex flex-col justify-center"
+                    dir="ltr"
                 >
                     {#if product.images.length > 0}
                         <Carousel
-                            class="rounded-xl h-[320px] md:h-[420px] shadow-lg"
-                            imgClass="object-cover h-full w-full rounded-xl"
+                            class="rounded-xl shadow-lg"
                             images={product.images.map((img: string) => ({
                                 src: img,
                                 alt: "",
@@ -153,14 +115,29 @@
                             <Controls />
                             {#if product.images.length > 1}
                                 <Thumbnails
-                                    index={0}
+                                    class="gap-3 bg-transparent my-2"
+                                    index={carouselIndex}
                                     images={product.images.map(
                                         (img: string) => ({
                                             src: img,
                                             alt: "",
                                         }),
                                     )}
-                                />
+                                >
+                                    {#snippet children({
+                                        image,
+                                        selected,
+                                        Thumbnail,
+                                    })}
+                                        <Thumbnail
+                                            {selected}
+                                            {...image}
+                                            class="hover:outline-primary-500 rounded-md shadow-xl hover:outline {selected
+                                                ? 'outline-primary-400 outline-4'
+                                                : ''}"
+                                        />
+                                    {/snippet}
+                                </Thumbnails>
                             {/if}
                         </Carousel>
                     {:else}
@@ -168,23 +145,22 @@
                             class="h-[320px] md:h-[420px] flex items-center justify-center rounded-xl"
                         >
                             <Spinner size="10" />
-                            <p class="ml-3">Loading images...</p>
+                            <p class="ml-3">جاري تحميل الصور...</p>
                         </div>
                     {/if}
 
-                    <!-- Share & Copy Section -->
                     <div class="flex flex-col gap-2 mt-2">
                         <h4 class="text-lg font-semibold">
-                            Share/Copy Product Link
+                            مشاركة/نسخ رابط المنتج
                         </h4>
                         <div class="flex flex-wrap gap-3 items-center">
-                            <Button
+                            <!--Button
                                 class="flex items-center gap-2 px-3 py-2 rounded-lg transition text-sm shadow"
                                 onclick={async () =>
                                     await shareToFacebookPage(
                                         product.product_id,
                                     )}
-                                aria-label="Share on Facebook"
+                                aria-label="مشاركة على فيسبوك"
                             >
                                 <FacebookSolid />
                             </Button>
@@ -194,27 +170,28 @@
                                     await shareToTelegramChannel(
                                         product.product_id,
                                     )}
-                                aria-label="Share on Telegram"
+                                aria-label="مشاركة على تيليجرام"
                             >
                                 <PaperPlaneOutline />
-                            </Button>
+                            </Button-->
 
                             <ButtonGroup>
                                 <Input
-                                    value={product.affiliation_link}
+                                class="w-sm"
+                                    value={product.affiliate_link}
                                     readonly
                                     disabled
                                 ></Input>
                                 <Clipboard
                                     class="p-2"
-                                    value={product.affiliation_link}
+                                    value={product.affiliate_link}
                                     embedded
                                 >
                                     {#snippet children(success)}
                                         <Tooltip isOpen={success}
                                             >{success
-                                                ? "Copied"
-                                                : "Copy to clipboard"}</Tooltip
+                                                ? "تم النسخ"
+                                                : "انسخ إلى الحافظة"}</Tooltip
                                         >
                                         {#if success}
                                             <CheckOutline />
@@ -226,15 +203,13 @@
                             </ButtonGroup>
                         </div>
                     </div>
-                    <!-- closes share/copy section -->
                 </div>
-                <!-- Product Info & Reviews -->
-                <div class="flex-1 flex flex-col align-center p-2">
-                    <!-- Product Info -->
+
+                <div class="flex-1 flex flex-col align-center p-6">
                     <div class="flex flex-col">
                         <h3
                             dir="rtl"
-                            class="text-l md:text-xl font-extrabold text-gray-900 dark:text-white mb-4 pr-5 leading-tight"
+                            class="text-2xl md:text-xl font-extrabold text-gray-900 dark:text-white mb-4 pr-5 leading-tight"
                         >
                             {product.title}
                         </h3>
@@ -250,28 +225,28 @@
                                 >
                                     €{product.original_price.toFixed(2)}
                                 </span>
-                                <Badge class="ml-1">
-                                    -{product.discount_percentage}%
-                                </Badge>
+                                <Badge class="ml-1"
+                                    >-{product.discount_percentage}%</Badge
+                                >
                             {/if}
                             <Button
-                                href={product.affiliation_link || product.url}
+                                href={product.affiliate_link}
                                 target="_blank"
-                                class="w-50 py-3 font-semibold text-lg mb-2 ml-auto"
+                                class="w-50 mr-auto font-semibold text-lg"
                             >
-                                <ShoppingBagOutline class="mr-2 h-5 w-5" />Buy
-                                Now
+                                <ShoppingBagOutline class="h-5 w-5" /> اشتري الآن
                             </Button>
                         </div>
                     </div>
-                    <!-- closes product info -->
                 </div>
             </div>
         </div>
     {:else}
         <div class="p-12 text-center bg-white rounded-2xl shadow-xl">
             <Spinner size="10" />
-            <p class="mt-4 text-lg text-gray-600">Loading product details...</p>
+            <p class="mt-4 text-lg text-gray-600">
+                جاري تحميل تفاصيل المنتج...
+            </p>
         </div>
     {/if}
 </Modal>

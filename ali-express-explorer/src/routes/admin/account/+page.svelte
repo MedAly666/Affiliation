@@ -15,10 +15,10 @@
 	let loading: boolean = data.loading || false;
 
 	// Filter and sorting functionality
-	let searchQuery = $state("");
-	let minPrice = $state(0);
-	let maxPrice = $state(100);
-	let sortbyValue = $state("discount"); // discount, price-low, price-high, newest
+	let keywords = $state("");
+	let min_sale_price = $state(0);
+	let max_sale_price = $state(100);
+	let sort = $state("discount"); // discount, price-low, price-high, newest
 	let favoriteProducts: string[] = $state([]);
 
 	// Load favorites from localStorage on mount
@@ -35,18 +35,18 @@
 			.filter((product) => {
 				// Search filter
 				if (
-					searchQuery &&
+					keywords &&
 					!product.title
 						.toLowerCase()
-						.includes(searchQuery.toLowerCase())
+						.includes(keywords.toLowerCase())
 				) {
 					return false;
 				}
 
 				// Price filter
 				if (
-					product.sale_price < minPrice ||
-					product.sale_price > maxPrice
+					product.sale_price < min_sale_price ||
+					product.sale_price > max_sale_price
 				) {
 					return false;
 				}
@@ -107,9 +107,9 @@
 		<div class="lg:col-span-1">
 			<FiltersPanel
 				openFilterPanal={true}
-				{minPrice}
-				{maxPrice}
-				{sortbyValue}
+				{min_sale_price}
+				{max_sale_price}
+				{sort}
 			/>
 		</div>
 		<div class="lg:col-span-3">

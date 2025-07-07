@@ -1,26 +1,37 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
-export const actions = {
-    search: async ({ cookies, request }) => {
-        const data = await request.formData();
+export const actions: Actions = {
+    search: async ({ request, url }) => {
+        const formData = await request.formData();
 
-        console.log('data.get(advancedFilterToggle)', data.get('advancedFilterToggle'));
+        // Extract form data
+        const keywords = formData.get('keywords')?.toString() || '';
+        const min_sale_price = formData.get('min_sale_price')?.toString();
+        const max_sale_price = formData.get('max_sale_price')?.toString();
+        const sortByType = formData.get('sortByType')?.toString();
 
-        const params: Params = {
-            q: data.get('searchQuery'),
-        };
+        // Build search URL
+        const searchUrl = new URL(url.origin + url.pathname);
 
-        if (data.get('advancedFilterToggle') == 'on') {
-            params.minPrice = data.get('minPrice');
-            params.maxPrice = data.get('maxPrice');
-            params.sortByType = data.get('sortByType');
+        // Add search parameters
+        if (keywords) {
+            searchUrl.searchParams.set('keywords', keywords);
         }
-        console.log(new URLSearchParams(params).toString())
 
-        redirect(303, '/search/result?' + new URLSearchParams(params).toString())
+        if (min_sale_price && Number(min_sale_price) > 0) {
+            searchUrl.searchParams.set('min_sale_price', min_sale_price);
+        }
 
+        if (max_sale_price && Number(max_sale_price) < Infinity) {
+            searchUrl.searchParams.set('max_sale_price', max_sale_price);
+        }
 
-    },
+        if (sortByType && sortByType !== 'SALE_PRICE_DESC') {
+            searchUrl.searchParams.set('sortByType', sortByType);
+        }
 
-} satisfies Actions;
+        // Redirect to search results
+        throw redirect(302, searchUrl.toString());
+    }
+};

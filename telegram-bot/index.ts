@@ -92,7 +92,7 @@ async function forwardMessage(client: TelegramClient, message: Api.Message) {
             if (message.chatId?.toString() === '-100' + sourceEntity.id.toString()) {
                 console.log(`New message received .`);
 
-                // Add small delay to avoid rate limits
+                // Add small delay to avoid rate page_sizes
                 await new Promise(resolve => setTimeout(resolve, 1000));
 
                 await forwardMessage(client, message);
