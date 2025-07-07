@@ -209,7 +209,7 @@
             class="h-32 w-32 rounded-full mx-auto mb-4 shadow-lg"
             alt="Deals Hunter Logo"
         />
-        <h1 class="text-gray-900 dark:text-white text-4xl font-bold mb-2">
+        <h1 class="text-center text-gray-900 dark:text-white text-4xl font-bold mb-2">
             ديلز هانتر – بوابتك للتسوق الذكي
         </h1>
         <p
