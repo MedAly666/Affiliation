@@ -175,9 +175,8 @@
                                 <PaperPlaneOutline />
                             </Button-->
 
-                            <ButtonGroup>
+                            <ButtonGroup class="w-full lg:w-sm">
                                 <Input
-                                class="w-sm"
                                     value={product.affiliate_link}
                                     readonly
                                     disabled
