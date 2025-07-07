@@ -24,7 +24,7 @@
     <h1
         class="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 text-center z-10"
     >
-        !أفضل العروض من علي إكسبريس بين يديك
+        !أفضل العروض من AliExpress بين يديك
     </h1>
     <p
         class="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl text-center z-10"
@@ -66,7 +66,7 @@
             منتجات رائجة في الجزائر
         </h2>
         <p class="text-gray-600 dark:text-gray-400">
-            اكتشف ما يبحث عنه الجزائريون اليوم على علي إكسبريس. التحديثات يومية
+            اكتشف ما يبحث عنه الجزائريون اليوم على AliExpress. التحديثات يومية
             ومباشرة!
         </p>
     </Card>
