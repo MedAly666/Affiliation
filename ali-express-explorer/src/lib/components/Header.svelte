@@ -14,11 +14,12 @@
 
 <Navbar
 	class="w-full fixed start-0 top-0 z-20 bg-primary-100 dark:bg-primary-700 flex p-0 px-2"
->
+
+	>
 		<NavBrand href="/">
 			<img
 				src={logo}
-				class="h-10 rounded-full mr-2"
+				class="h-10 rounded-full m-2"
 				alt="Deals Hunter Logo"
 			/>
 			<span

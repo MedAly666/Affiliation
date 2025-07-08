@@ -23,13 +23,13 @@
     />
     <h1
         class="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 text-center z-10"
-    >
+    dir="rtl">
         !أفضل العروض من AliExpress بين يديك
     </h1>
     <p
         class="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl text-center z-10"
     >
-        تصفح المنتجات الرائجة، قارن الأسعار، واشترِ بالذكاء! وفر الوقت والدينار
+        تصفح المنتجات الرائجة، قارن الأسعار، واشترِ بالذكاء! وفر الوقت والمال
         مع أدوات بحث متقدمة وتحديثات في الوقت الحقيقي.
     </p>
     <Button
@@ -65,7 +65,7 @@
         <h2 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">
             منتجات رائجة في الجزائر
         </h2>
-        <p class="text-gray-600 dark:text-gray-400">
+        <p class="text-gray-600 dark:text-gray-400" dir="rtl">
             اكتشف ما يبحث عنه الجزائريون اليوم على AliExpress. التحديثات يومية
             ومباشرة!
         </p>
@@ -92,7 +92,7 @@
             فلاتر بحث متقدمة
         </h2>
         <p class="text-gray-600 dark:text-gray-400">
-            حدد السعر بالدينار، نوع المنتج، أو التقييمات لتصل بسرعة لما تحتاجه.
+            حدد السعر بالاليورو، نوع المنتج، أو التقييمات لتصل بسرعة لما تحتاجه.
         </p>
     </Card>
     <Card

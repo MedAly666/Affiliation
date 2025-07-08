@@ -6,25 +6,24 @@
     import ProductCard from "$lib/components/ProductCard.svelte";
     import type { Product, QueryOptions } from "$lib/types";
     import type { PageProps } from "./$types";
-    import { onMount } from "svelte";
 
     let { data }: PageProps = $props();
 
     // Reactive state
-    let products = $state(data.streamed.products);
-    let hotProducts = $state(data.streamed.hotProducts);
-    let keywords = $state(data.keywords);
-    let openFilterPanal = $state(data.isAdvancedSearch);
+    let products:Product[] = $state(data.streamed.products);
+    let hotProducts:Product[] = $state(data.streamed.hotProducts);
+    let keywords:string = $state(data.keywords);
+    let openFilterPanal:boolean = $state(data.isAdvancedSearch);
 
     // Add these missing variables that are referenced in your template
-    let max_sale_price = $state(data.max_sale_price || 1000);
-    let min_sale_price = $state(data.min_sale_price || 0);
-    let sort = $state(data.sort || "SALE_PRICE_DESC");
-    let page_no = $state(2);
-    let page_size = $state(25);
+    let max_sale_price:number = $state(data.max_sale_price || 1000);
+    let min_sale_price:number = $state(data.min_sale_price || 0);
+    let sort:string = $state(data.sort || "SALE_PRICE_DESC");
+    let page_no:number = $state(2);
+    let page_size:number = $state(25);
 
     // Loading state for infinite scroll
-    let isLoadingMore = $state(false);
+    let isLoadingMore:boolean = $state(false);
 
     async function loadProducts(options: QueryOptions) {
         try {
