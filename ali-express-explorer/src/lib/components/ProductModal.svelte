@@ -39,42 +39,14 @@
     let toastMessage: string = $state("تمت المشاركة بنجاح");
     let carouselIndex = $state(0);
 
-    async function shareToFacebookPage(product_id: number) {
-        let res = await fetch("/api/share/facebook", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ product_id }),
-        });
-
-        const data = await res.json();
-        if (data.success) {
-            toastStatus = true;
-            toastMessage = "تمت مشاركة المنتج بنجاح على فيسبوك";
-            setTimeout(() => {
-                toastStatus = false;
-            }, 3000);
-        }
+    function shareToFacebook() {
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(product.affiliate_link)}`;
+        window.open(url, "_blank", "noopener,noreferrer");
     }
 
-    async function shareToTelegramChannel(product_id: number) {
-        let res = await fetch("/api/share/telegram", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ product_id }),
-        });
-
-        const data = await res.json();
-        if (data.success) {
-            toastMessage = "تمت مشاركة المنتج بنجاح على تيليجرام";
-            toastStatus = true;
-            setTimeout(() => {
-                toastStatus = false;
-            }, 3000);
-        }
+    function shareToTelegram() {
+        const url = `https://t.me/share/url?url=${encodeURIComponent(product.affiliate_link)}`;
+        window.open(url, "_blank", "noopener,noreferrer");
     }
 </script>
 
@@ -154,26 +126,20 @@
                             مشاركة/نسخ رابط المنتج
                         </h4>
                         <div class="flex flex-wrap gap-3 items-center">
-                            <!--Button
+                            <Button
                                 class="flex items-center gap-2 px-3 py-2 rounded-lg transition text-sm shadow"
-                                onclick={async () =>
-                                    await shareToFacebookPage(
-                                        product.product_id,
-                                    )}
+                                onclick={shareToFacebook}
                                 aria-label="مشاركة على فيسبوك"
                             >
                                 <FacebookSolid />
                             </Button>
                             <Button
                                 class="flex items-center gap-2 px-3 py-2 rounded-lg transition text-sm shadow"
-                                onclick={async () =>
-                                    await shareToTelegramChannel(
-                                        product.product_id,
-                                    )}
+                                onclick={shareToTelegram}
                                 aria-label="مشاركة على تيليجرام"
                             >
                                 <PaperPlaneOutline />
-                            </Button-->
+                            </Button>
 
                             <ButtonGroup class="w-full lg:w-sm">
                                 <Input
