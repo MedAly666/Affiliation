@@ -43,7 +43,7 @@ export const load: PageLoad = async ({ url, fetch }) => {
     async function fetchProducts(queryParams: QueryOptions): Promise<Product[]> {
         try {
 
-            const response = await fetch('./api/products?' + new URLSearchParams(queryParams));
+            const response = await fetch('./api/products?' + new URLSearchParams(queryParams as Record<string, string>));
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -59,7 +59,7 @@ export const load: PageLoad = async ({ url, fetch }) => {
 
     async function fetchHotProducts(queryParams: QueryOptions): Promise<Product[]> {
         try {
-            const response = await fetch('./api/hot-products?' + new URLSearchParams(queryParams));
+            const response = await fetch('./api/hot-products?' + new URLSearchParams(queryParams as Record<string, string>));
 
 
             if (!response.ok) {

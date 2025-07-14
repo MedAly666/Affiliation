@@ -10,25 +10,29 @@
     let { data }: PageProps = $props();
 
     // Reactive state
-    let products:Product[] = $state(data.streamed.products);
-    let hotProducts:Product[] = $state(data.streamed.hotProducts);
-    let keywords:string = $state(data.keywords);
-    let openFilterPanal:boolean = $state(data.isAdvancedSearch);
+    let products: Product[] = $state(data.streamed.products);
+    let hotProducts: Product[] = $state(data.streamed.hotProducts);
+    let keywords: string = $state(data.keywords);
+    let openFilterPanal: boolean = $state(data.isAdvancedSearch);
 
     // Add these missing variables that are referenced in your template
-    let max_sale_price:number = $state(data.max_sale_price || 1000);
-    let min_sale_price:number = $state(data.min_sale_price || 0);
-    let sort:string = $state(data.sort || "SALE_PRICE_DESC");
-    let page_no:number = $state(2);
-    let page_size:number = $state(25);
+    let max_sale_price: number = $state(data.max_sale_price || 1000);
+    let min_sale_price: number = $state(data.min_sale_price || 0);
+    let sort:
+        | "SALE_PRICE_ASC"
+        | "SALE_PRICE_DESC"
+        | "LAST_VOLUME_DESC"
+        | "LAST_VOLUME_ASC" = $state(data.sort || "SALE_PRICE_DESC");
+    let page_no: number = $state(2);
+    let page_size: number = $state(25);
 
     // Loading state for infinite scroll
-    let isLoadingMore:boolean = $state(false);
+    let isLoadingMore: boolean = $state(false);
 
     async function loadProducts(options: QueryOptions) {
         try {
             const response = await fetch(
-                "/api/products?" + new URLSearchParams(options),
+                "/api/products?" + new URLSearchParams(options as Record<string, string>),
             );
             const newProducts = await response.json();
             return newProducts;
@@ -41,7 +45,7 @@
     async function loadHotProducts(options: QueryOptions) {
         try {
             const response = await fetch(
-                "/api/hot-products?" + new URLSearchParams(options),
+                "/api/hot-products?" + new URLSearchParams(options as Record<string, string>),
             );
             const newProducts = await response.json();
             return newProducts;
@@ -147,16 +151,12 @@
         </aside>
 
         <main class="flex-1 h-screen overflow-y-auto p-4">
-            <header class="mb-6  border-r-4 border-primary-500 px-4">
-                <h1
-                    class="text-2xl font-bold text-gray-900 dark:text-white"
-                >
+            <header class="mb-6 border-r-4 border-primary-500 px-4">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
                     نتائج البحث
                 </h1>
                 {#if products.length > 0}
-                    <span
-                        class="font-normal text-gray-600 dark:text-gray-400"
-                    >
+                    <span class="font-normal text-gray-600 dark:text-gray-400">
                         تم العثور على {products.length} منتج
                     </span>
                 {/if}
@@ -208,7 +208,9 @@
             class="h-32 w-32 rounded-full mx-auto mb-4 shadow-lg"
             alt="Deals Hunter Logo"
         />
-        <h1 class="text-center text-gray-900 dark:text-white text-4xl font-bold mb-2">
+        <h1
+            class="text-center text-gray-900 dark:text-white text-4xl font-bold mb-2"
+        >
             ديلز هانتر – بوابتك للتسوق الذكي
         </h1>
         <p
