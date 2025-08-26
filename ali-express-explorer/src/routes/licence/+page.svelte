@@ -48,4 +48,3 @@ SOFTWARE.
     </p>
   </Card>
 </section>
-<Footer />

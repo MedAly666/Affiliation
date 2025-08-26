@@ -1,8 +1,7 @@
 <script lang="ts">
     import logo from "$lib/assets/logo.png";
-    import { Button, Card } from "flowbite-svelte";
+    import { Button, Card, Accordion, AccordionItem } from "flowbite-svelte";
 </script>
-
 
 <!-- Hero Section -->
 <section
@@ -23,14 +22,15 @@
     />
     <h1
         class="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 text-center z-10"
-    dir="rtl">
+        dir="rtl"
+    >
         !أفضل العروض من AliExpress بين يديك
     </h1>
     <p
         class="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl text-center z-10"
     >
-        تصفح المنتجات الرائجة، قارن الأسعار، واشترِ بالذكاء! وفر الوقت والمال
-        مع أدوات بحث متقدمة وتحديثات في الوقت الحقيقي.
+        تصفح المنتجات الرائجة، قارن الأسعار، واشترِ بالذكاء! وفر الوقت والمال مع
+        أدوات بحث متقدمة وتحديثات في الوقت الحقيقي.
     </p>
     <Button
         href="/search"
@@ -43,7 +43,7 @@
 </section>
 
 <!-- Features Section -->
-<section class="max-w-6xl mx-auto py-16 px-4 grid gap-10 md:grid-cols-3 gap-2">
+<section class="max-w-6xl mx-auto py-16 px-4 grid md:grid-cols-3 gap-2">
     <Card
         class="flex flex-col items-center text-center shadow-md hover:shadow-xl transition-shadow p-5"
     >
@@ -122,8 +122,61 @@
     </Card>
 </section>
 
+<!-- How It Works Section -->
+<section class="bg-white dark:bg-gray-900 py-16 px-4" dir="rtl">
+    <div class="max-w-4xl mx-auto text-center mb-10">
+        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+            كيف يعمل الموقع؟
+        </h3>
+        <p class="text-gray-600 dark:text-gray-300">
+            ثلاث خطوات بسيطة لتجد أفضل الصفقات
+        </p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8 text-center">
+        <div class="flex flex-col items-center">
+            <div
+                class="bg-primary-100 dark:bg-primary-900 rounded-full p-4 mb-4 text-2xl font-bold text-primary-500 dark:text-primary-100"
+            >
+                1
+            </div>
+            <h4 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">
+                تصفح وابحث
+            </h4>
+            <p class="text-gray-600 dark:text-gray-400">
+                استخدم محرك البحث الذكي أو تصفح أقسام المنتجات الرائجة.
+            </p>
+        </div>
+        <div class="flex flex-col items-center">
+            <div
+                class="bg-primary-100 dark:bg-primary-900 rounded-full p-4 mb-4 text-2xl font-bold text-primary-500 dark:text-primary-100"
+            >
+                2
+            </div>
+            <h4 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">
+                قارن واختر
+            </h4>
+            <p class="text-gray-600 dark:text-gray-400">
+                قارن الأسعار والمواصفات بين مختلف المنتجات بسهولة.
+            </p>
+        </div>
+        <div class="flex flex-col items-center">
+            <div
+                class="bg-primary-100 dark:bg-primary-900 rounded-full p-4 mb-4 text-2xl font-bold text-primary-500 dark:text-primary-100"
+            >
+                3
+            </div>
+            <h4 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">
+                اشترِ ووفر
+            </h4>
+            <p class="text-gray-600 dark:text-gray-400">
+                انقر على المنتج للشراء من AliExpress مباشرة بأفضل سعر.
+            </p>
+        </div>
+    </div>
+</section>
+
 <!-- Testimonials / Trusted By Section -->
-<section class="bg-primary-50 dark:bg-gray-900 py-12 px-4" dir="rtl">
+<section class="bg-primary-50 dark:bg-gray-800 py-12 px-4" dir="rtl">
     <div class="max-w-4xl mx-auto text-center mb-10">
         <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
             موثوق من آلاف المتسوقين الجزائريين
@@ -165,4 +218,45 @@
             </div>
         </Card>
     </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="max-w-4xl mx-auto py-16 px-4" dir="rtl">
+    <div class="text-center mb-10">
+        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+            أسئلة شائعة
+        </h3>
+    </div>
+    <Accordion class="dark:!border-gray-700">
+        <AccordionItem>
+            {#snippet header()}
+                <span class="text-gray-900 dark:text-white"
+                    >هل الموقع آمن للشراء؟</span
+                >{/snippet}
+            <p class="mb-2 text-gray-500 dark:text-gray-400">
+                نعم، Deals Hunter هو محرك بحث للعروض. عند النقر على "شراء"، يتم
+                توجيهك إلى صفحة المنتج على موقع AliExpress الرسمي والآمن لإتمام
+                عملية الشراء.
+            </p>
+        </AccordionItem>
+        <AccordionItem>
+            {#snippet header()}<span class="text-gray-900 dark:text-white"
+                    >كيف يتم تحديد المنتجات الرائجة؟</span
+                >{/snippet}
+            <p class="mb-2 text-gray-500 dark:text-gray-400">
+                نقوم بتحليل البيانات من AliExpress لتحديد المنتجات الأكثر بحثاً
+                وشراءً من قبل المستخدمين في الجزائر، ويتم تحديثها بشكل دوري.
+            </p>
+        </AccordionItem>
+        <AccordionItem>
+            {#snippet header()}
+                <span class="text-gray-900 dark:text-white"
+                    >هل الأسعار المعروضة هي نفسها على AliExpress؟</span
+                >{/snippet}
+            <p class="mb-2 text-gray-500 dark:text-gray-400">
+                نعم، الأسعار هي نفسها تماماً. نحن نساعدك فقط في إيجاد أفضل
+                العروض وتتبعها بسهولة.
+            </p>
+        </AccordionItem>
+    </Accordion>
 </section>

@@ -65,14 +65,13 @@
                 <a href="mailto:support@dealshunter.com" class="flex items-center gap-2 text-blue-600 hover:underline">
                     <MailBoxSolid class="w-5 h-5" /> support@dealshunter.com
                 </a>
-                <a href="https://facebook.com/dealshunter" target="_blank" class="flex items-center gap-2 text-blue-700 hover:underline">
+                <a href="https://www.facebook.com/profile.php?id=61577390182645" target="_blank" class="flex items-center gap-2 text-blue-700 hover:underline">
                     <FacebookSolid class="w-5 h-5" /> Facebook
                 </a>
-                <a href="https://t.me/dealshunter" target="_blank" class="flex items-center gap-2 text-blue-500 hover:underline">
+                <a href="https://t.me/deal_hunter_dz" target="_blank" class="flex items-center gap-2 text-blue-500 hover:underline">
                     <PaperPlaneSolid class="w-5 h-5" /> Telegram
                 </a>
             </div>
         </div>
     </Card>
 </section>
-<Footer />

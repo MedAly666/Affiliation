@@ -76,5 +76,3 @@
         </div>
     </Card>
 </section>
-
-<Footer />
