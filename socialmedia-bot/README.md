@@ -1,4 +1,4 @@
-# facebook-bot
+# socialmedia-bot
 
 To install dependencies:
 

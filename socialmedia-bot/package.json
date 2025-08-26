@@ -1,5 +1,5 @@
 {
-  "name": "telegram-bot",
+  "name": "socialmedia-bot",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -10,7 +10,10 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "axios": "^1.10.0",
+    "@types/fb": "^0.0.30",
+    "axios": "^1.11.0",
+    "fb": "^2.0.0",
+    "form-data": "^4.0.4",
     "telegram": "^2.26.22"
   }
 }
