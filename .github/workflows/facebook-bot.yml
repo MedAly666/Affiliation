@@ -11,7 +11,7 @@ jobs:
   run-bot:
     runs-on: ubuntu-latest
     concurrency:
-      group: telegram-bot-forwarder
+      group: facebook-bot-forwarder
       cancel-in-progress: true
     steps:
       - name: Checkout repository
