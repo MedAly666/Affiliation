@@ -1,4 +1,4 @@
-name: Telegram Bot Forwarder
+name: Facebook Bot Forwarder
 
 on:
   schedule:
